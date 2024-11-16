@@ -5,5 +5,5 @@ namespace Ingenerator\StubObjects\Attribute;
 
 interface DefaultStubValueProvider
 {
-    public function getValue(): mixed;
+    public function getValue(array $specified_values): mixed;
 }

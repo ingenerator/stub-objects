@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 namespace Ingenerator\StubObjects\Factory;
 
-use Ingenerator\StubObjects\Attribute\DefaultStubValueProvider;
-use ReflectionAttribute;
+use Ingenerator\StubObjects\Configurator\AttributeOrGuessingDefaultValueConfigurator;
+use Ingenerator\StubObjects\Configurator\DefaultValueConfigurator;
+use Ingenerator\StubObjects\DefaultValueProvider\AttributeBasedDefaultValueProvider;
+use Ingenerator\StubObjects\DefaultValueProvider\DefaultValueProviderImplementation;
 use ReflectionClass;
 use ReflectionProperty;
 
@@ -15,14 +17,17 @@ class DefaultObjectFactory implements StubFactoryImplementation
                                                    | ReflectionProperty::IS_PRIVATE;
 
     public function __construct(
-        private readonly ReflectionClass $target_reflection
+        private readonly ReflectionClass $target_reflection,
+        private readonly DefaultValueConfigurator $default_value_config = new AttributeOrGuessingDefaultValueConfigurator(
+        )
     ) {
 
     }
 
     public function make(array $values): object
     {
-        $values = $this->mergeDefaultValues($values);
+        $defaults = $this->getDefaultsForUnspecifiedProperties($values);
+        $values = [...$defaults, ...$values];
 
         // Create the instance and apply customised values to it
         $instance = $this->target_reflection->newInstance();
@@ -34,48 +39,27 @@ class DefaultObjectFactory implements StubFactoryImplementation
         return $instance;
     }
 
-    private function mergeDefaultValues(array $values): array
+    private function getDefaultsForUnspecifiedProperties(array $values): array
     {
+        $defaults = [];
         foreach ($this->target_reflection->getProperties(self::FILTER_INSTANCE_PROPERTIES) as $prop) {
             $prop_name = $prop->getName();
-            if ($prop->hasDefaultValue()) {
-                // We'll just use the one defined in the class
-                continue;
-            }
 
             if (array_key_exists($prop_name, $values)) {
                 // The caller has specified a value
                 continue;
             }
 
-            $values[$prop_name] = $this->stubDefaultValue($prop);
+            if ($prop->hasDefaultValue()) {
+                // We'll just use the one defined in the class
+                continue;
+            }
+
+            // @todo this chaining is because we can probably cache the getDefaultValueProviders for each class
+            $defaults[$prop_name] = $this->default_value_config->getDefaultValueProvider($prop)->getValue([]);
         }
 
-        return $values;
+        return $defaults;
     }
-
-    private function stubDefaultValue(ReflectionProperty $prop): mixed
-    {
-        if ($provider = $this->mapValueProviderConfig($prop)) {
-            return $provider->getValue();
-        }
-
-        if ($prop->getType()->allowsNull()) {
-            // If the property type is nullable, assume it can be defaulted to a null
-            return NULL;
-        }
-    }
-
-    private function mapValueProviderConfig(ReflectionProperty $prop): ?DefaultStubValueProvider
-    {
-        $attrs = $prop->getAttributes(DefaultStubValueProvider::class, ReflectionAttribute::IS_INSTANCEOF);
-        // @todo: throw if more than one
-        if ($attrs) {
-            return $attrs[0]->newInstance();
-        }
-
-        return NULL;
-    }
-
 
 }

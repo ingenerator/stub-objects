@@ -10,7 +10,7 @@ class StubSequentialId implements DefaultStubValueProvider
 {
     private static int $next_id = 1;
 
-    public function getValue(): int
+    public function getValue(array $specified_values): int
     {
         return ++self::$next_id;
     }

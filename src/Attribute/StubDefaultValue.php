@@ -13,7 +13,7 @@ readonly class StubDefaultValue implements DefaultStubValueProvider
 
     }
 
-    public function getValue(): mixed
+    public function getValue(array $specified_values): mixed
     {
         return $this->value;
     }
