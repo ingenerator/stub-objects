@@ -3,6 +3,7 @@
 namespace Ingenerator\StubObjects;
 
 use Ingenerator\StubObjects\DefaultValueGuesser\DefaultValueProviderGuesser;
+use Ingenerator\StubObjects\DefaultValueGuesser\StubDateTimeValueGuesser;
 use Ingenerator\StubObjects\DefaultValueGuesser\StubNullValueGuesser;
 
 class StandardGuesserConfig
@@ -16,6 +17,7 @@ class StandardGuesserConfig
         // @todo: I *think* we only want to load these once?
         return [
             new StubNullValueGuesser(),
+            new StubDateTimeValueGuesser(),
         ];
     }
 }
