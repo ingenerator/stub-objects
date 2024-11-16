@@ -5,17 +5,12 @@ namespace test\unit\Ingenerator\StubObjects\DefaultValueGuesser;
 
 use Ingenerator\StubObjects\Attribute\StubNullValue;
 use Ingenerator\StubObjects\DefaultValueGuesser\StubNullValueGuesser;
-use PHPUnit\Framework\Attributes\TestWith;
-use PHPUnit\Framework\TestCase;
 
-class StubNullValueGuesserTest extends TestCase
+class StubNullValueGuesserTest extends BaseDefaultValueProviderGuesserTestCase
 {
 
-    #[TestWith(['nullable_string', StubNullValue::class])]
-    #[TestWith(['nullable_int', StubNullValue::class])]
-    #[TestWith(['nullable_date', StubNullValue::class])]
-    #[TestWith(['non_null_string', NULL])]
-    public function test_it_guesses_null_if_nothing_else_specified(string $property, ?string $expect_guess)
+
+    public function test_it_guesses_null_if_nothing_else_specified()
     {
         $class = new class {
             private ?string $nullable_string;
@@ -24,14 +19,16 @@ class StubNullValueGuesserTest extends TestCase
             private string $non_null_string;
         };
 
-        $reflection = new \ReflectionClass($class);
-        $actual_guess = (new StubNullValueGuesser)->guessProvider($reflection->getProperty($property));
-
-        if ($actual_guess) {
-            $actual_guess = $actual_guess::class;
-        }
-
-        $this->assertSame($expect_guess, $actual_guess);
+        $this->assertGuesses(
+            [
+                'nullable_string' => StubNullValue::class,
+                'nullable_int' => StubNullValue::class,
+                'nullable_date' => StubNullValue::class,
+                'non_null_string' => FALSE,
+            ],
+            $class::class,
+            new StubNullValueGuesser()
+        );
     }
 
 }

@@ -8,6 +8,6 @@ use ReflectionProperty;
 
 interface DefaultValueProviderGuesser
 {
-    public function guessProvider(ReflectionProperty $property): ?DefaultStubValueProvider;
+    public function guessProvider(ReflectionProperty $property): false|DefaultStubValueProvider;
 
 }

@@ -8,13 +8,13 @@ use ReflectionProperty;
 
 class StubNullValueGuesser implements DefaultValueProviderGuesser
 {
-    public function guessProvider(ReflectionProperty $property): ?DefaultStubValueProvider
+    public function guessProvider(ReflectionProperty $property): false|DefaultStubValueProvider
     {
         if ($property->getType()->allowsNull()) {
             return new StubNullValue();
         }
 
-        return NULL;
+        return FALSE;
     }
 
 }

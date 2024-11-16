@@ -63,19 +63,19 @@ class AttributeOrGuessingDefaultValueConfiguratorTest extends TestCase
     {
         $guessers = [
             new class implements DefaultValueProviderGuesser {
-                public function guessProvider(ReflectionProperty $property): ?DefaultStubValueProvider
+                public function guessProvider(ReflectionProperty $property): false|DefaultStubValueProvider
                 {
                     return match ($property->getName() === 'foo') {
-                        FALSE => NULL,
+                        FALSE => FALSE,
                         TRUE => new StubNullValue(),
                     };
                 }
             },
             new class implements DefaultValueProviderGuesser {
-                public function guessProvider(ReflectionProperty $property): ?DefaultStubValueProvider
+                public function guessProvider(ReflectionProperty $property): false|DefaultStubValueProvider
                 {
                     return match ($property->getName() === 'bar') {
-                        FALSE => NULL,
+                        FALSE => FALSE,
                         TRUE => new StubDefaultValue('whatever'),
                     };
                 }
