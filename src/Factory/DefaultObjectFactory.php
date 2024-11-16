@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace Ingenerator\StubObjects\Factory;
 
 use Ingenerator\StubObjects\Configurator\AttributeOrGuessingDefaultValueConfigurator;
+use Ingenerator\StubObjects\Configurator\AttributeOrGuessingValueCasterConfigurator;
 use Ingenerator\StubObjects\Configurator\DefaultValueConfigurator;
+use Ingenerator\StubObjects\Configurator\ValueCasterConfigurator;
 use Ingenerator\StubObjects\DefaultValueProvider\AttributeBasedDefaultValueProvider;
 use Ingenerator\StubObjects\DefaultValueProvider\DefaultValueProviderImplementation;
 use ReflectionClass;
@@ -18,8 +20,8 @@ class DefaultObjectFactory implements StubFactoryImplementation
 
     public function __construct(
         private readonly ReflectionClass $target_reflection,
-        private readonly DefaultValueConfigurator $default_value_config = new AttributeOrGuessingDefaultValueConfigurator(
-        )
+        private readonly DefaultValueConfigurator $default_vals = new AttributeOrGuessingDefaultValueConfigurator(),
+        private readonly ValueCasterConfigurator $value_casters = new AttributeOrGuessingValueCasterConfigurator(),
     ) {
 
     }
@@ -33,6 +35,12 @@ class DefaultObjectFactory implements StubFactoryImplementation
         $instance = $this->target_reflection->newInstance();
         foreach ($values as $prop_name => $value) {
             $property = $this->target_reflection->getProperty($prop_name);
+            // @todo: splitting getting the $caster here is again because this should be cacheable for a class
+            $caster = $this->value_casters->getCaster($property);
+            if ($caster) {
+                $value = $caster->cast($prop_name, $value);
+            }
+
             $property->setValue($instance, $value);
         }
 
@@ -56,7 +64,7 @@ class DefaultObjectFactory implements StubFactoryImplementation
             }
 
             // @todo this chaining is because we can probably cache the getDefaultValueProviders for each class
-            $defaults[$prop_name] = $this->default_value_config->getDefaultValueProvider($prop)->getValue([]);
+            $defaults[$prop_name] = $this->default_vals->getDefaultValueProvider($prop)->getValue([]);
         }
 
         return $defaults;

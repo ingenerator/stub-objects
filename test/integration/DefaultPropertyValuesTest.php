@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace test\integration;
 
 use DateTimeImmutable;
+use Ingenerator\StubObjects\Attribute\Caster\StubAsDateTime;
 use Ingenerator\StubObjects\Attribute\DefaultValue\StubDefaultValue;
 use Ingenerator\StubObjects\Attribute\DefaultValue\StubRandomString;
 use Ingenerator\StubObjects\Attribute\DefaultValue\StubSequentialId;
@@ -170,6 +171,45 @@ class DefaultPropertyValuesTest extends TestCase
         $this->assertMatchesRegularExpression('/^[a-z]{6}$/', $result2->token);
         $this->assertNotEquals($result2->name, $result1->name);
         $this->assertNotEquals($result2->token, $result1->token);
+    }
+
+    public function test_it_can_default_date_time_properties()
+    {
+        $class = new readonly class {
+            // Is mapped by default
+            // @todo or will be, when the guesser is implemented
+            #[StubAsDateTime]
+            public DateTimeImmutable $created_at;
+
+            // Is mapped explicitly
+            #[StubDefaultValue('2024-02-01 10:03:02')]
+            #[StubAsDateTime]
+            public DateTimeImmutable $other;
+
+            #[StubAsDateTime]
+            public mixed $custom;
+
+            // Goes through the mapper, but nothing happens because it is already getting an object value
+            #[StubAsDateTime]
+            public mixed $custom_from_date;
+        };
+        $time_before = new DateTimeImmutable();
+        $result = $this->newSubject()->stub(
+            $class::class,
+            [
+                'custom' => '2022-01-02',
+                'custom_from_date' => $time_before,
+            ]
+        );
+        $time_after = new DateTimeImmutable();
+
+        $this->assertEquals(new DateTimeImmutable('2024-02-01 10:03:02'), $result->other);
+        $this->assertEquals(new DateTimeImmutable('2022-01-02 00:00:00'), $result->custom);
+        $this->assertSame($time_before, $result->custom_from_date);
+
+        // Assert the time of the `new DateTimeImmutable` allowing for it to elapse during the test
+        $this->assertGreaterThanOrEqual($time_before, $result->created_at);
+        $this->assertLessThanOrEqual($time_after, $result->created_at);
     }
 
     private function newSubject(): StubObjectFactory
