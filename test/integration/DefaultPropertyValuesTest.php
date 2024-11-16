@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace test\integration\Ingenerator\StubObjects;
 
 use DateTimeImmutable;
+use Ingenerator\StubObjects\Attribute\StubDefaultValue;
 use Ingenerator\StubObjects\Attribute\StubSequentialId;
 use Ingenerator\StubObjects\StubObjectFactory;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -128,6 +129,24 @@ class DefaultPropertyValuesTest extends TestCase
                 'other_number' => 15,
             ],
             (array) $result2
+        );
+    }
+
+    public function test_it_can_default_properties_to_a_fixed_value()
+    {
+        $class = new readonly class {
+            #[StubDefaultValue('whatever')]
+            public ?string $status;
+        };
+
+        $this->assertSame(
+            ['status' => 'whatever'],
+            (array) $this->newSubject()->stub($class::class, [])
+        );
+
+        $this->assertSame(
+            ['status' => 'foo'],
+            (array) $this->newSubject()->stub($class::class, ['status' => 'foo'])
         );
     }
 
