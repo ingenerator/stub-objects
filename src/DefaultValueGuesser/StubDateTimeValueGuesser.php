@@ -4,7 +4,7 @@ namespace Ingenerator\StubObjects\DefaultValueGuesser;
 
 use DateTimeImmutable;
 use Ingenerator\StubObjects\Attribute\DefaultStubValueProvider;
-use Ingenerator\StubObjects\Attribute\StubDefaultValue;
+use Ingenerator\StubObjects\Attribute\DefaultValue\StubDefaultValue;
 use ReflectionProperty;
 
 class StubDateTimeValueGuesser implements DefaultValueProviderGuesser

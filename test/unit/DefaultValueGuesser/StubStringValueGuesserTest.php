@@ -2,7 +2,7 @@
 
 namespace test\unit\DefaultValueGuesser;
 
-use Ingenerator\StubObjects\Attribute\StubRandomString;
+use Ingenerator\StubObjects\Attribute\DefaultValue\StubRandomString;
 use Ingenerator\StubObjects\DefaultValueGuesser\StubStringValueGuesser;
 use Random\Engine\Mt19937;
 use Random\Randomizer;

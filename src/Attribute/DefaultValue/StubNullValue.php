@@ -1,6 +1,8 @@
 <?php
 
-namespace Ingenerator\StubObjects\Attribute;
+namespace Ingenerator\StubObjects\Attribute\DefaultValue;
+
+use Ingenerator\StubObjects\Attribute\DefaultStubValueProvider;
 
 class StubNullValue implements DefaultStubValueProvider
 {

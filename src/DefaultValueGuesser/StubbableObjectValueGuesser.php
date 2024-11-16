@@ -3,7 +3,7 @@
 namespace Ingenerator\StubObjects\DefaultValueGuesser;
 
 use Ingenerator\StubObjects\Attribute\DefaultStubValueProvider;
-use Ingenerator\StubObjects\Attribute\StubDefaultValue;
+use Ingenerator\StubObjects\Attribute\DefaultValue\StubDefaultValue;
 use ReflectionProperty;
 
 class StubbableObjectValueGuesser implements DefaultValueProviderGuesser

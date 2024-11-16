@@ -1,8 +1,9 @@
 <?php
 
-namespace Ingenerator\StubObjects\Attribute;
+namespace Ingenerator\StubObjects\Attribute\DefaultValue;
 
 use Attribute;
+use Ingenerator\StubObjects\Attribute\DefaultStubValueProvider;
 use Random\Randomizer;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]

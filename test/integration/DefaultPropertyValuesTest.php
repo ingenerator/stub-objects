@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace test\integration;
 
 use DateTimeImmutable;
-use Ingenerator\StubObjects\Attribute\StubDefaultValue;
-use Ingenerator\StubObjects\Attribute\StubRandomString;
-use Ingenerator\StubObjects\Attribute\StubSequentialId;
+use Ingenerator\StubObjects\Attribute\DefaultValue\StubDefaultValue;
+use Ingenerator\StubObjects\Attribute\DefaultValue\StubRandomString;
+use Ingenerator\StubObjects\Attribute\DefaultValue\StubSequentialId;
 use Ingenerator\StubObjects\StubObjectFactory;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;

@@ -3,7 +3,7 @@
 namespace Ingenerator\StubObjects\DefaultValueGuesser;
 
 use Ingenerator\StubObjects\Attribute\DefaultStubValueProvider;
-use Ingenerator\StubObjects\Attribute\StubRandomString;
+use Ingenerator\StubObjects\Attribute\DefaultValue\StubRandomString;
 use Random\Randomizer;
 use ReflectionProperty;
 

@@ -3,7 +3,7 @@
 namespace test\unit\DefaultValueGuesser;
 
 use DateTimeImmutable;
-use Ingenerator\StubObjects\Attribute\StubDefaultValue;
+use Ingenerator\StubObjects\Attribute\DefaultValue\StubDefaultValue;
 use Ingenerator\StubObjects\DefaultValueGuesser\StubbableObjectValueGuesser;
 use Random\Randomizer;
 

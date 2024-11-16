@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace test\unit\DefaultValueGuesser;
 
-use Ingenerator\StubObjects\Attribute\StubNullValue;
+use Ingenerator\StubObjects\Attribute\DefaultValue\StubNullValue;
 use Ingenerator\StubObjects\DefaultValueGuesser\StubNullValueGuesser;
 
 class StubNullValueGuesserTest extends BaseDefaultValueProviderGuesserTestCase

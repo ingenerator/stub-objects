@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace test\unit\DefaultValueGuesser;
 
 use DateTimeImmutable;
-use Ingenerator\StubObjects\Attribute\StubDefaultValue;
+use Ingenerator\StubObjects\Attribute\DefaultValue\StubDefaultValue;
 use Ingenerator\StubObjects\DefaultValueGuesser\StubDateTimeValueGuesser;
 
 class StubDateTimeValueGuesserTest extends BaseDefaultValueProviderGuesserTestCase
