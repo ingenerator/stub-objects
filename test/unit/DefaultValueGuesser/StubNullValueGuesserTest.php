@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace test\unit\Ingenerator\StubObjects\DefaultValueGuesser;
+namespace test\unit\DefaultValueGuesser;
 
 use Ingenerator\StubObjects\Attribute\StubNullValue;
 use Ingenerator\StubObjects\DefaultValueGuesser\StubNullValueGuesser;
@@ -21,9 +21,9 @@ class StubNullValueGuesserTest extends BaseDefaultValueProviderGuesserTestCase
 
         $this->assertGuesses(
             [
-                'nullable_string' => StubNullValue::class,
-                'nullable_int' => StubNullValue::class,
-                'nullable_date' => StubNullValue::class,
+                'nullable_string' => [StubNullValue::class => NULL],
+                'nullable_int' => [StubNullValue::class => NULL],
+                'nullable_date' => [StubNullValue::class => NULL],
                 'non_null_string' => FALSE,
             ],
             $class::class,

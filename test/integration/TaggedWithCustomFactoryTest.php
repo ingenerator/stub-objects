@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace test\integration\Ingenerator\StubObjects;
+namespace test\integration;
 
 use Ingenerator\StubObjects\Attribute\StubFactory;
 use Ingenerator\StubObjects\StubObjectFactory;

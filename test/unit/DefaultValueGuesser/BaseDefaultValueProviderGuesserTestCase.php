@@ -1,6 +1,6 @@
 <?php
 
-namespace test\unit\Ingenerator\StubObjects\DefaultValueGuesser;
+namespace test\unit\DefaultValueGuesser;
 
 use Ingenerator\StubObjects\DefaultValueGuesser\DefaultValueProviderGuesser;
 use PHPUnit\Framework\TestCase;
@@ -18,7 +18,7 @@ abstract class BaseDefaultValueProviderGuesserTestCase extends TestCase
             $provider = $guesser->guessProvider($reflection->getProperty($prop_name));
             $actual_guesses[$prop_name] = match ($provider) {
                 FALSE => FALSE,
-                default => $provider::class
+                default => [$provider::class => $provider->getValue([])]
             };
         }
 

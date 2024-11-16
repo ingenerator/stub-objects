@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace test\unit\Ingenerator\StubObjects\Configurator;
+namespace test\unit\Configurator;
 
 use Error;
 use Ingenerator\StubObjects\Attribute\StubFactory;

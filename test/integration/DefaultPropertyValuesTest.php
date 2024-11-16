@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace test\integration\Ingenerator\StubObjects;
+namespace test\integration;
 
 use DateTimeImmutable;
 use Ingenerator\StubObjects\Attribute\StubDefaultValue;

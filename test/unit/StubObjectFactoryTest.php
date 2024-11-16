@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace test\unit\Ingenerator\StubObjects;
+namespace test\unit;
 
 use Ingenerator\StubObjects\FailedToStubObjectException;
 use Ingenerator\StubObjects\StubObjectFactory;
