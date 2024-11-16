@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Ingenerator\StubObjects\Factory;
 
+use Ingenerator\StubObjects\Attribute\DefaultStubValueProvider;
+use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionProperty;
 
@@ -54,10 +56,25 @@ class DefaultObjectFactory
 
     private function stubDefaultValue(ReflectionProperty $prop): mixed
     {
+        if ($provider = $this->mapValueProviderConfig($prop)) {
+            return $provider->getValue();
+        }
+
         if ($prop->getType()->allowsNull()) {
             // If the property type is nullable, assume it can be defaulted to a null
             return NULL;
         }
+    }
+
+    private function mapValueProviderConfig(ReflectionProperty $prop): ?DefaultStubValueProvider
+    {
+        $attrs = $prop->getAttributes(DefaultStubValueProvider::class, ReflectionAttribute::IS_INSTANCEOF);
+        // @todo: throw if more than one
+        if ($attrs) {
+            return $attrs[0]->newInstance();
+        }
+
+        return NULL;
     }
 
 

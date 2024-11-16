@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace test\integration\Ingenerator\StubObjects;
 
 use DateTimeImmutable;
+use Ingenerator\StubObjects\Attribute\StubSequentialId;
 use Ingenerator\StubObjects\StubObjectFactory;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -99,6 +100,35 @@ class DefaultPropertyValuesTest extends TestCase
         $result = $this->newSubject()->stub($class::class, $values);
         $this->assertInstanceOf($class::class, $result);
         $this->assertSame($expect, $result->getProps());
+    }
+
+    public function test_it_can_default_properties_to_a_sequential_id()
+    {
+        $class = new readonly class {
+            #[StubSequentialId]
+            public ?int $id;
+
+            #[StubSequentialId]
+            public int $other_id;
+
+            public ?int $other_number;
+        };
+
+        $result1 = $this->newSubject()->stub($class::class, []);
+
+        $this->assertSame(NULL, $result1->other_number, 'Should not affect other numeric fields');
+        $this->assertSame($result1->id + 1, $result1->other_id, 'Should allocate sequential numbers');
+
+        // Note that the id sequence is unique even across different instances
+        $result2 = $this->newSubject()->stub($class::class, ['other_id' => 2, 'other_number' => 15]);
+        $this->assertSame(
+            [
+                'id' => $result1->other_id + 1,
+                'other_id' => 2,
+                'other_number' => 15,
+            ],
+            (array) $result2
+        );
     }
 
 
