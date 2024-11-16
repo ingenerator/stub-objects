@@ -8,13 +8,13 @@ use Ingenerator\StubObjects\DefaultValueGuesser\StubDateTimeValueGuesser;
 use Ingenerator\StubObjects\DefaultValueGuesser\StubNullValueGuesser;
 use Ingenerator\StubObjects\DefaultValueGuesser\StubStringValueGuesser;
 
-class StandardGuesserConfig
+class StandardConfig
 {
 
     /**
      * @return DefaultValueProviderGuesser[]
      */
-    public static function loadGuessers(): array
+    public static function loadDefaultValueGuessers(): array
     {
         // @todo: I *think* we only want to load these once?
         return [
