@@ -6,7 +6,7 @@ namespace Ingenerator\StubObjects\Configurator;
 use DomainException;
 use Ingenerator\StubObjects\Attribute\DefaultStubValueProvider;
 use Ingenerator\StubObjects\DefaultValueGuesser\DefaultValueProviderGuesser;
-use Ingenerator\StubObjects\DefaultValueGuesser\StubNullValueGuesser;
+use Ingenerator\StubObjects\StandardGuesserConfig;
 use ReflectionAttribute;
 use ReflectionProperty;
 
@@ -19,10 +19,7 @@ class AttributeOrGuessingDefaultValueConfigurator implements DefaultValueConfigu
 
     public function __construct(?array $guessers = NULL)
     {
-        $this->guessers = $guessers ?? [
-            // @todo: extract the default guesser config
-            new StubNullValueGuesser(),
-        ];
+        $this->guessers = $guessers ?? StandardGuesserConfig::loadGuessers();
     }
 
     public function getDefaultValueProvider(ReflectionProperty $property): DefaultStubValueProvider
