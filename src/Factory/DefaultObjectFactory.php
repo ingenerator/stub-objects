@@ -8,7 +8,7 @@ use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionProperty;
 
-class DefaultObjectFactory
+class DefaultObjectFactory implements StubFactoryImplementation
 {
     private const int FILTER_INSTANCE_PROPERTIES = ReflectionProperty::IS_PUBLIC
                                                    | ReflectionProperty::IS_PROTECTED

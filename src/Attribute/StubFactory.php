@@ -4,33 +4,23 @@ declare(strict_types=1);
 namespace Ingenerator\StubObjects\Attribute;
 
 use Attribute;
-use Closure;
-use Ingenerator\StubObjects\Factory\DefaultObjectFactory;
+use Ingenerator\StubObjects\Factory\CallableObjectFactory;
 
 #[Attribute(Attribute::TARGET_CLASS)]
 readonly class StubFactory
 {
-    public Closure|DefaultObjectFactory $factory;
+    public CallableObjectFactory $factory;
 
     public function __construct(
-        callable|DefaultObjectFactory $factory,
+        callable $factory,
     ) {
-
-        $this->factory = match (TRUE) {
-            $factory instanceof DefaultObjectFactory => $factory,
-            // We can't use the first-class callable syntax in an attribute definition, so we have to pass
-            // legacy callables (e.g. [SomeClass::class, 'methodToCall']) and convert them here
-            default => $factory(...)
-        };
+        // We can't use the first-class callable syntax in an attribute definition, so we have to pass
+        // legacy callables (e.g. [SomeClass::class, 'methodToCall']) and convert them here
+        $this->factory = new CallableObjectFactory($factory(...));
     }
 
-    public function make(array $values): mixed
+    public function getFactory(): CallableObjectFactory
     {
-        if ($this->factory instanceof DefaultObjectFactory) {
-            return $this->factory->make($values);
-        }
-
-        return ($this->factory)($values);
+        return $this->factory;
     }
-
 }

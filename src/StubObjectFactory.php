@@ -3,13 +3,17 @@ declare(strict_types=1);
 
 namespace Ingenerator\StubObjects;
 
-use Ingenerator\StubObjects\Attribute\StubFactory;
-use Ingenerator\StubObjects\Factory\DefaultObjectFactory;
+use Ingenerator\StubObjects\Configurator\AttributeOrDefaultStubFactoryConfigurator;
+use Ingenerator\StubObjects\Configurator\StubFactoryConfigurator;
 use ReflectionClass;
 use Throwable;
 
 class StubObjectFactory
 {
+    public function __construct(
+        private readonly StubFactoryConfigurator $factory_config = new AttributeOrDefaultStubFactoryConfigurator(),
+    ) {
+    }
 
     /**
      * @template T of object
@@ -21,7 +25,7 @@ class StubObjectFactory
     {
         try {
             $reflection = new ReflectionClass($class);
-            $factory = $this->getFactoryMapping($reflection);
+            $factory = $this->factory_config->getStubFactory($reflection);
 
             return $factory->make($values);
         } catch (Throwable $e) {
@@ -30,16 +34,5 @@ class StubObjectFactory
                 previous: $e,
             );
         }
-    }
-
-    private function getFactoryMapping(ReflectionClass $reflection): StubFactory
-    {
-        $attrs = $reflection->getAttributes(StubFactory::class);
-        // @todo throw if multiple
-        if ($attrs) {
-            return $attrs[0]->newInstance();
-        }
-
-        return new StubFactory(new DefaultObjectFactory($reflection));
     }
 }
