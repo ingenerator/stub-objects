@@ -8,7 +8,7 @@ use Attribute;
 #[Attribute(Attribute::TARGET_PROPERTY)]
 readonly class StubDefaultValue implements DefaultStubValueProvider
 {
-    public function __construct(private string $value)
+    public function __construct(private mixed $value)
     {
 
     }
