@@ -5,12 +5,26 @@ namespace Ingenerator\StubObjects\Configurator;
 
 use DomainException;
 use Ingenerator\StubObjects\Attribute\DefaultStubValueProvider;
-use Ingenerator\StubObjects\Attribute\StubNullValue;
+use Ingenerator\StubObjects\DefaultValueGuesser\DefaultValueProviderGuesser;
+use Ingenerator\StubObjects\DefaultValueGuesser\StubNullValueGuesser;
 use ReflectionAttribute;
 use ReflectionProperty;
 
 class AttributeOrGuessingDefaultValueConfigurator implements DefaultValueConfigurator
 {
+    /**
+     * @var DefaultValueProviderGuesser[]
+     */
+    private readonly array $guessers;
+
+    public function __construct(?array $guessers = NULL)
+    {
+        $this->guessers = $guessers ?? [
+            // @todo: extract the default guesser config
+            new StubNullValueGuesser(),
+        ];
+    }
+
     public function getDefaultValueProvider(ReflectionProperty $property): DefaultStubValueProvider
     {
         $attrs = $property->getAttributes(DefaultStubValueProvider::class, ReflectionAttribute::IS_INSTANCEOF);
@@ -18,10 +32,20 @@ class AttributeOrGuessingDefaultValueConfigurator implements DefaultValueConfigu
             return $this->returnSingleProviderFromAttributes($attrs, $property);
         }
 
-        if ($property->getType()->allowsNull()) {
-            return new StubNullValue();
+        foreach ($this->guessers as $guesser) {
+            if ($provider = $guesser->guessProvider($property)) {
+                return $provider;
+            }
         }
 
+        throw new DomainException(
+            sprintf(
+                'Could not guess a default value for `%s $%s` in %s - you will need to manually add a DefaultStubValueProvider attribute',
+                $property->getType()->__toString(),
+                $property->getName(),
+                $property->getDeclaringClass()->getName(),
+            )
+        );
     }
 
     private function returnSingleProviderFromAttributes(array $attrs, ReflectionProperty $property)

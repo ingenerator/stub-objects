@@ -10,6 +10,9 @@ use Ingenerator\StubObjects\Attribute\DefaultStubValueProvider;
 use Ingenerator\StubObjects\Attribute\StubDefaultValue;
 use Ingenerator\StubObjects\Attribute\StubNullValue;
 use Ingenerator\StubObjects\Configurator\AttributeOrGuessingDefaultValueConfigurator;
+use Ingenerator\StubObjects\DefaultValueGuesser\DefaultValueProviderGuesser;
+use Ingenerator\StubObjects\DefaultValueGuesser\StubNullValueGuesser;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionProperty;
@@ -54,20 +57,60 @@ class AttributeOrGuessingDefaultValueConfiguratorTest extends TestCase
         $subject->getDefaultValueProvider($prop);
     }
 
-    public function test_it_returns_null_provider_if_nothing_specified_for_nullable_property()
+    #[TestWith(['foo', NULL])]
+    #[TestWith(['bar', 'whatever'])]
+    public function test_it_returns_guessed_provider_if_any(string $property, ?string $expect_value)
     {
+        $guessers = [
+            new class implements DefaultValueProviderGuesser {
+                public function guessProvider(ReflectionProperty $property): ?DefaultStubValueProvider
+                {
+                    return match ($property->getName() === 'foo') {
+                        FALSE => NULL,
+                        TRUE => new StubNullValue(),
+                    };
+                }
+            },
+            new class implements DefaultValueProviderGuesser {
+                public function guessProvider(ReflectionProperty $property): ?DefaultStubValueProvider
+                {
+                    return match ($property->getName() === 'bar') {
+                        FALSE => NULL,
+                        TRUE => new StubDefaultValue('whatever'),
+                    };
+                }
+            },
+        ];
         $class = new class {
             private ?string $foo;
+            private string $bar;
         };
+        $provider = $this
+            ->newSubject(guessers: $guessers)
+            ->getDefaultValueProvider($this->getReflectionProperty($class::class, $property));
 
-        $provider = $this->newSubject()->getDefaultValueProvider($this->getReflectionProperty($class::class, 'foo'));
-        $this->assertInstanceOf(StubNullValue::class, $provider);
-        $this->assertNull($provider->getValue([]));
+        $this->assertInstanceOf(DefaultStubValueProvider::class, $provider);
+        $this->assertSame($expect_value, $provider->getValue([]));
     }
 
-    private function newSubject(): AttributeOrGuessingDefaultValueConfigurator
+    public function test_it_throws_if_no_guesser_can_find_a_default_provider()
     {
-        return new AttributeOrGuessingDefaultValueConfigurator();
+        $subject = $this->newSubject(guessers: [new StubNullValueGuesser()]);
+        $class = new class {
+            private string $foo;
+        };
+        $this->expectException(DomainException::class);
+        $this->expectExceptionMessage('Could not guess a default value for `string $foo`');
+        $subject->getDefaultValueProvider($this->getReflectionProperty($class::class, 'foo'));
+    }
+
+    private function newSubject(array $guessers = []): AttributeOrGuessingDefaultValueConfigurator
+    {
+        $guessers ??= [
+            new StubNullValueGuesser(),
+        ];
+
+        return new AttributeOrGuessingDefaultValueConfigurator($guessers);
     }
 
     private function getReflectionProperty(string $class, string $property): ReflectionProperty
