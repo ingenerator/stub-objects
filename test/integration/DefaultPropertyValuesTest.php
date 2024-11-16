@@ -5,6 +5,7 @@ namespace test\integration;
 
 use DateTimeImmutable;
 use Ingenerator\StubObjects\Attribute\StubDefaultValue;
+use Ingenerator\StubObjects\Attribute\StubRandomString;
 use Ingenerator\StubObjects\Attribute\StubSequentialId;
 use Ingenerator\StubObjects\StubObjectFactory;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -150,6 +151,26 @@ class DefaultPropertyValuesTest extends TestCase
         );
     }
 
+    public function test_it_can_default_strings_to_random_values()
+    {
+        $class = new readonly class {
+            // Is mapped by default
+            public string $name;
+            // Is mapped explicitly
+            #[StubRandomString(length: 6, chars: 'abcdefghijklmnopqrstuvwxyz')]
+            public string $token;
+        };
+
+        $result1 = $this->newSubject()->stub($class::class, []);
+        $this->assertMatchesRegularExpression('/^[a-zA-Z0-9]{16}$/', $result1->name);
+        $this->assertMatchesRegularExpression('/^[a-z]{6}$/', $result1->token);
+
+        $result2 = $this->newSubject()->stub($class::class, []);
+        $this->assertMatchesRegularExpression('/^[a-zA-Z0-9]{16}$/', $result2->name);
+        $this->assertMatchesRegularExpression('/^[a-z]{6}$/', $result2->token);
+        $this->assertNotEquals($result2->name, $result1->name);
+        $this->assertNotEquals($result2->token, $result1->token);
+    }
 
     private function newSubject(): StubObjectFactory
     {

@@ -5,6 +5,7 @@ namespace Ingenerator\StubObjects;
 use Ingenerator\StubObjects\DefaultValueGuesser\DefaultValueProviderGuesser;
 use Ingenerator\StubObjects\DefaultValueGuesser\StubDateTimeValueGuesser;
 use Ingenerator\StubObjects\DefaultValueGuesser\StubNullValueGuesser;
+use Ingenerator\StubObjects\DefaultValueGuesser\StubStringValueGuesser;
 
 class StandardGuesserConfig
 {
@@ -18,6 +19,7 @@ class StandardGuesserConfig
         return [
             new StubNullValueGuesser(),
             new StubDateTimeValueGuesser(),
+            new StubStringValueGuesser(),
         ];
     }
 }
