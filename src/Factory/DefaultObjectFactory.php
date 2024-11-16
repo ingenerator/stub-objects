@@ -15,6 +15,14 @@ class DefaultObjectFactory
 
     public function make(array $values): object
     {
-        return $this->target_reflection->newInstance();
+        // Create the instance and apply customised values to it
+        $instance = $this->target_reflection->newInstance();
+        foreach ($values as $prop_name => $value) {
+            $property = $this->target_reflection->getProperty($prop_name);
+            $property->setValue($instance, $value);
+        }
+
+        return $instance;
     }
+
 }
