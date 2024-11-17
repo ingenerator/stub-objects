@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Ingenerator\StubObjects\Configurator;
 
 use Ingenerator\StubObjects\Attribute\StubFactory;
-use Ingenerator\StubObjects\Factory\DefaultObjectFactory;
+use Ingenerator\StubObjects\Factory\DefaultStubFactory;
 use Ingenerator\StubObjects\Factory\StubFactoryImplementation;
 use ReflectionClass;
 
@@ -17,7 +17,7 @@ class AttributeOrDefaultStubFactoryConfigurator implements StubFactoryConfigurat
             return $attrs[0]->newInstance()->getFactory();
         }
 
-        return new DefaultObjectFactory($class);
+        return new DefaultStubFactory($class);
     }
 
 }

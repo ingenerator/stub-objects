@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace test\unit;
 
 use Ingenerator\StubObjects\FailedToStubObjectException;
-use Ingenerator\StubObjects\StubObjectFactory;
+use Ingenerator\StubObjects\StubObjects;
 use PHPUnit\Framework\TestCase;
 
-class StubObjectFactoryTest extends TestCase
+class StubObjectsTest extends TestCase
 {
     public function test_it_can_create_instance_of_empty_class(): void
     {
@@ -31,9 +31,9 @@ class StubObjectFactoryTest extends TestCase
         $subject->stub($class);
     }
 
-    private function newSubject(): StubObjectFactory
+    private function newSubject(): StubObjects
     {
-        return new StubObjectFactory();
+        return new StubObjects();
     }
 
 }

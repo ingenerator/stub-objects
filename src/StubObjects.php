@@ -8,7 +8,7 @@ use Ingenerator\StubObjects\Configurator\StubFactoryConfigurator;
 use ReflectionClass;
 use Throwable;
 
-class StubObjectFactory
+class StubObjects
 {
     public function __construct(
         private readonly StubFactoryConfigurator $factory_config = new AttributeOrDefaultStubFactoryConfigurator(),

@@ -8,7 +8,7 @@ use Ingenerator\StubObjects\Attribute\StubAs\StubAsDateTime;
 use Ingenerator\StubObjects\Attribute\StubDefault\StubDefaultRandomString;
 use Ingenerator\StubObjects\Attribute\StubDefault\StubDefaultSequentialId;
 use Ingenerator\StubObjects\Attribute\StubDefault\StubDefaultValue;
-use Ingenerator\StubObjects\StubObjectFactory;
+use Ingenerator\StubObjects\StubObjects;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -210,8 +210,8 @@ class DefaultPropertyValuesTest extends TestCase
         $this->assertLessThanOrEqual($time_after, $result->created_at);
     }
 
-    private function newSubject(): StubObjectFactory
+    private function newSubject(): StubObjects
     {
-        return new StubObjectFactory();
+        return new StubObjects();
     }
 }

@@ -12,7 +12,7 @@ use Ingenerator\StubObjects\DefaultValueProvider\DefaultValueProviderImplementat
 use ReflectionClass;
 use ReflectionProperty;
 
-class DefaultObjectFactory implements StubFactoryImplementation
+class DefaultStubFactory implements StubFactoryImplementation
 {
     private const int FILTER_INSTANCE_PROPERTIES = ReflectionProperty::IS_PUBLIC
                                                    | ReflectionProperty::IS_PROTECTED

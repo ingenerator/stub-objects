@@ -6,8 +6,8 @@ namespace test\unit\Configurator;
 use Error;
 use Ingenerator\StubObjects\Attribute\StubFactory;
 use Ingenerator\StubObjects\Configurator\AttributeOrDefaultStubFactoryConfigurator;
-use Ingenerator\StubObjects\Factory\CallableObjectFactory;
-use Ingenerator\StubObjects\Factory\DefaultObjectFactory;
+use Ingenerator\StubObjects\Factory\CallableStubFactory;
+use Ingenerator\StubObjects\Factory\DefaultStubFactory;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
@@ -24,7 +24,7 @@ class AttributeOrDefaultStubFactoryConfiguratorTest extends TestCase
     {
         $subject = $this->newSubject();
         $factory = $subject->getStubFactory(new ReflectionClass(MyEntityWithCustomFactory::class));
-        $this->assertInstanceOf(CallableObjectFactory::class, $factory);
+        $this->assertInstanceOf(CallableStubFactory::class, $factory);
 
         $result = $factory->make(['foo' => 'bar']);
         $this->assertSame(['foo' => 'bar', '_fake_make' => TRUE], (array) $result);
@@ -43,7 +43,7 @@ class AttributeOrDefaultStubFactoryConfiguratorTest extends TestCase
         $class = new class {
         };
         $factory = $this->newSubject()->getStubFactory(new ReflectionClass($class));
-        $this->assertInstanceOf(DefaultObjectFactory::class, $factory);
+        $this->assertInstanceOf(DefaultStubFactory::class, $factory);
     }
 
     private function newSubject(): AttributeOrDefaultStubFactoryConfigurator

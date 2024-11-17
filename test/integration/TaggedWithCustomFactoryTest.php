@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace test\integration;
 
 use Ingenerator\StubObjects\Attribute\StubFactory;
-use Ingenerator\StubObjects\StubObjectFactory;
+use Ingenerator\StubObjects\StubObjects;
 use PHPUnit\Framework\TestCase;
 
 class TaggedWithCustomFactoryTest extends TestCase
@@ -21,9 +21,9 @@ class TaggedWithCustomFactoryTest extends TestCase
         $this->assertSame(['param1' => 'Something', 'param2' => 3], (array) $result);
     }
 
-    private function newSubject(): StubObjectFactory
+    private function newSubject(): StubObjects
     {
-        return new StubObjectFactory();
+        return new StubObjects();
     }
 
 }
