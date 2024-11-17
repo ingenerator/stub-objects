@@ -1,25 +1,27 @@
 <?php
-declare(strict_types=1);
 
 namespace Ingenerator\StubObjects\Attribute\StubAs;
 
 use Attribute;
-use DateTimeImmutable;
 use Ingenerator\StubObjects\Attribute\StubAs;
 use Ingenerator\StubObjects\StubbingContext;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-class StubAsDateTime implements StubAs
+class StubAsStubObject implements StubAs
 {
+    public function __construct(private readonly string $as_class)
+    {
+
+    }
+
     public function cast(string $property, mixed $value, StubbingContext $context): mixed
     {
-        // @todo sanity checks for the potential types of input
-        // @todo support our DateParam syntax
-        if (($value === NULL) || ($value instanceof DateTimeImmutable)) {
+        // @todo: direct tests for the stubAs methods
+        if (($value instanceof $this->as_class) || ($value === NULL)) {
             return $value;
         }
 
-        return new DateTimeImmutable($value);
+        return $context->stub_objects->stub($this->as_class, $value);
     }
 
 }

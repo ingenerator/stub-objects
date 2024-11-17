@@ -2,19 +2,23 @@
 
 namespace Ingenerator\StubObjects\Guesser\StubAsGuesser;
 
-use DateTimeImmutable;
 use Ingenerator\StubObjects\Attribute\StubAs;
-use Ingenerator\StubObjects\Attribute\StubAs\StubAsDateTime;
+use Ingenerator\StubObjects\Attribute\StubAs\StubAsStubObject;
 use Ingenerator\StubObjects\Guesser\StubAsGuesser;
 use Ingenerator\StubObjects\StubbingContext;
 use ReflectionProperty;
 
-class StubAsDateTimeGuesser implements StubAsGuesser
+class StubAsStubObjectGuesser implements StubAsGuesser
 {
     public function guessCaster(ReflectionProperty $property, StubbingContext $context): false|StubAs
     {
-        if ($property->getType()->getName() === DateTimeImmutable::class) {
-            return new StubAsDateTime();
+        if ($property->getType()->isBuiltin()) {
+            return FALSE;
+        }
+
+        $class = $property->getType()->getName();
+        if ($context->isStubbable($class)) {
+            return new StubAsStubObject($class);
         }
 
         return FALSE;

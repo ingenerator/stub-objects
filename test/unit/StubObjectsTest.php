@@ -31,9 +31,9 @@ class StubObjectsTest extends TestCase
         $subject->stub($class);
     }
 
-    private function newSubject(): StubObjects
+    private function newSubject(array $stubbable_class_patterns = ['*']): StubObjects
     {
-        return new StubObjects();
+        return new StubObjects(...get_defined_vars());
     }
 
 }

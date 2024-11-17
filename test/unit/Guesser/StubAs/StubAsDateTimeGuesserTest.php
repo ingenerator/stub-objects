@@ -19,7 +19,7 @@ class StubAsDateTimeGuesserTest extends BaseStubAsGuesserTestCase
 
         $this->assertGuesses(
             [
-                'string' => false,
+                'string' => FALSE,
                 'non_null_date' => StubAsDateTime::class,
                 'nullable_date' => StubAsDateTime::class,
             ],

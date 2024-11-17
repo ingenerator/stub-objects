@@ -10,10 +10,12 @@ use Ingenerator\StubObjects\Attribute\StubAs;
 use Ingenerator\StubObjects\Attribute\StubAs\StubAsDateTime;
 use Ingenerator\StubObjects\Configurator\AttributeOrGuessStubAsConfigurator;
 use Ingenerator\StubObjects\Guesser\StubAsGuesser;
+use Ingenerator\StubObjects\StubbingContext;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionProperty;
+use test\TestUtils;
 
 class AttributeOrGuessStubAsConfiguratorTest extends TestCase
 {
@@ -25,9 +27,9 @@ class AttributeOrGuessStubAsConfiguratorTest extends TestCase
             public mixed $foo;
         };
 
-        $provider = $this->newSubject()->getCaster($this->getReflectionProperty($class::class, 'foo'));
+        $provider = $this->newSubject()->getCaster($this->getReflectionProperty($class::class, 'foo'), TestUtils::fakeStubbingContext());
         $this->assertInstanceOf(StubAsDateTime::class, $provider);
-        $this->assertEquals(new DateTimeImmutable('2024-02-01 00:00:00'), $provider->cast('foo', '2024-02-01'));
+        $this->assertEquals(new DateTimeImmutable('2024-02-01 00:00:00'), $provider->cast('foo', '2024-02-01', TestUtils::fakeStubbingContext()));
     }
 
     public function test_it_returns_custom_hydrator_attribute()
@@ -36,9 +38,9 @@ class AttributeOrGuessStubAsConfiguratorTest extends TestCase
             #[MyReversingCaster]
             private readonly mixed $foo;
         };
-        $provider = $this->newSubject()->getCaster($this->getReflectionProperty($class::class, 'foo'));
+        $provider = $this->newSubject()->getCaster($this->getReflectionProperty($class::class, 'foo'), TestUtils::fakeStubbingContext());
         $this->assertInstanceOf(MyReversingCaster::class, $provider);
-        $this->assertSame('emases', $provider->cast('foo', 'sesame'));
+        $this->assertSame('emases', $provider->cast('foo', 'sesame', TestUtils::fakeStubbingContext()));
     }
 
     public function test_it_throws_on_multiple_caster_attributes()
@@ -53,7 +55,7 @@ class AttributeOrGuessStubAsConfiguratorTest extends TestCase
         $subject = $this->newSubject();
         $this->expectException(DomainException::class);
         $this->expectExceptionMessage('only one StubValueCaster');
-        $subject->getCaster($prop, 'abc');
+        $subject->getCaster($prop, TestUtils::fakeStubbingContext());
     }
 
     #[TestWith(['foo', StubAsDateTime::class])]
@@ -62,7 +64,7 @@ class AttributeOrGuessStubAsConfiguratorTest extends TestCase
     {
         $guessers = [
             new class implements StubAsGuesser {
-                public function guessCaster(ReflectionProperty $property): false|StubAs
+                public function guessCaster(ReflectionProperty $property, StubbingContext $context): false|StubAs
                 {
                     return match ($property->getName() === 'foo') {
                         FALSE => FALSE,
@@ -77,7 +79,7 @@ class AttributeOrGuessStubAsConfiguratorTest extends TestCase
         };
         $provider = $this
             ->newSubject(guessers: $guessers)
-            ->getCaster($this->getReflectionProperty($class::class, $property));
+            ->getCaster($this->getReflectionProperty($class::class, $property), TestUtils::fakeStubbingContext());
 
         if ($expect_caster === FALSE) {
             $this->assertFalse($provider);
@@ -103,7 +105,7 @@ class AttributeOrGuessStubAsConfiguratorTest extends TestCase
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class MyReversingCaster implements StubAs
 {
-    public function cast(string $property, mixed $value): mixed
+    public function cast(string $property, mixed $value, StubbingContext $context): mixed
     {
         return strrev($value);
     }

@@ -10,6 +10,7 @@ use Ingenerator\StubObjects\Factory\CallableStubFactory;
 use Ingenerator\StubObjects\Factory\DefaultStubFactory;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use test\TestUtils;
 
 class AttributeOrDefaultStubFactoryConfiguratorTest extends TestCase
 {
@@ -26,7 +27,8 @@ class AttributeOrDefaultStubFactoryConfiguratorTest extends TestCase
         $factory = $subject->getStubFactory(new ReflectionClass(MyEntityWithCustomFactory::class));
         $this->assertInstanceOf(CallableStubFactory::class, $factory);
 
-        $result = $factory->make(['foo' => 'bar']);
+
+        $result = $factory->make(['foo' => 'bar'], TestUtils::fakeStubbingContext());
         $this->assertSame(['foo' => 'bar', '_fake_make' => TRUE], (array) $result);
     }
 

@@ -9,6 +9,7 @@ use Ingenerator\StubObjects\Configurator\StubAsConfigurator;
 use Ingenerator\StubObjects\Configurator\StubDefaultConfigurator;
 use Ingenerator\StubObjects\DefaultValueProvider\AttributeBasedDefaultValueProvider;
 use Ingenerator\StubObjects\DefaultValueProvider\DefaultValueProviderImplementation;
+use Ingenerator\StubObjects\StubbingContext;
 use ReflectionClass;
 use ReflectionProperty;
 
@@ -26,9 +27,11 @@ class DefaultStubFactory implements StubFactoryImplementation
 
     }
 
-    public function make(array $values): object
+    public function make(array $values, StubbingContext $context): object
     {
-        $defaults = $this->getDefaultsForUnspecifiedProperties($values);
+        $defaults = $this->getDefaultsForUnspecifiedProperties($values, $context);
+        // @todo expose the merge of defaults and values as an attribute too so that target classes can hook in and set
+        //       more defaults conditionally on the ones they have already.
         $values = [...$defaults, ...$values];
 
         // Create the instance and apply customised values to it
@@ -36,9 +39,9 @@ class DefaultStubFactory implements StubFactoryImplementation
         foreach ($values as $prop_name => $value) {
             $property = $this->target_reflection->getProperty($prop_name);
             // @todo: splitting getting the $caster here is again because this should be cacheable for a class
-            $caster = $this->value_casters->getCaster($property);
+            $caster = $this->value_casters->getCaster($property, $context);
             if ($caster) {
-                $value = $caster->cast($prop_name, $value);
+                $value = $caster->cast($prop_name, $value, $context);
             }
 
             $property->setValue($instance, $value);
@@ -47,7 +50,7 @@ class DefaultStubFactory implements StubFactoryImplementation
         return $instance;
     }
 
-    private function getDefaultsForUnspecifiedProperties(array $values): array
+    private function getDefaultsForUnspecifiedProperties(array $values, StubbingContext $context): array
     {
         $defaults = [];
         foreach ($this->target_reflection->getProperties(self::FILTER_INSTANCE_PROPERTIES) as $prop) {
@@ -64,7 +67,7 @@ class DefaultStubFactory implements StubFactoryImplementation
             }
 
             // @todo this chaining is because we can probably cache the getDefaultValueProviders for each class
-            $defaults[$prop_name] = $this->default_vals->getDefaultValueProvider($prop)->getValue([]);
+            $defaults[$prop_name] = $this->default_vals->getDefaultValueProvider($prop, $context)->getValue([]);
         }
 
         return $defaults;

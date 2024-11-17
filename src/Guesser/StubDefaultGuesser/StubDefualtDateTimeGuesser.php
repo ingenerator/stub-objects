@@ -6,11 +6,12 @@ use DateTimeImmutable;
 use Ingenerator\StubObjects\Attribute\StubDefault;
 use Ingenerator\StubObjects\Attribute\StubDefault\StubDefaultValue;
 use Ingenerator\StubObjects\Guesser\StubDefaultGuesser;
+use Ingenerator\StubObjects\StubbingContext;
 use ReflectionProperty;
 
 class StubDefualtDateTimeGuesser implements StubDefaultGuesser
 {
-    public function guessProvider(ReflectionProperty $property): false|StubDefault
+    public function guessProvider(ReflectionProperty $property, StubbingContext $context): false|StubDefault
     {
         if ($property->getType()->getName() === DateTimeImmutable::class) {
             // Note that we're guessing this in string form, converting back to a DateTime happens at the

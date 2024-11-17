@@ -6,6 +6,7 @@ use DateTimeImmutable;
 use Ingenerator\StubObjects\Attribute\StubDefault\StubDefaultValue;
 use Ingenerator\StubObjects\Guesser\StubDefaultGuesser\StubDefaultStubbableObjectGuesser;
 use Random\Randomizer;
+use test\TestUtils;
 
 class StubDefaultStubbableObjectGuesserTest extends BaseStubDefaultGuesserTestCase
 {
@@ -14,22 +15,24 @@ class StubDefaultStubbableObjectGuesserTest extends BaseStubDefaultGuesserTestCa
         $class = new class {
             private DateTimeImmutable $date_time;
             private Randomizer $randomizer;
-            private StubDefaultStubbableObjectGuesserTest $stubbable_1;
+            private MyChildStubbable $not_null_stubbable;
         };
 
         $this->assertGuesses(
             [
-                // @todo: fix
-//                'date_time' => FALSE,
-//                'randomizer' => FALSE,
-                'stubbable_1' => [StubDefaultValue::class => []],
+                'date_time' => FALSE,
+                'randomizer' => FALSE,
+                'not_null_stubbable' => [StubDefaultValue::class => []],
             ],
             $class::class,
             new StubDefaultStubbableObjectGuesser(),
-        );
-
-        $this->markTestIncomplete(
-            'Need to work out how to identify/whitelist classes we can recursively stub'
+            TestUtils::fakeStubbingContext(
+                stubbable_class_patterns: [MyChildStubbable::class],
+            )
         );
     }
+}
+
+class MyChildStubbable
+{
 }

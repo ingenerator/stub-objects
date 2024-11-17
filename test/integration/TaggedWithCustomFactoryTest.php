@@ -21,9 +21,9 @@ class TaggedWithCustomFactoryTest extends TestCase
         $this->assertSame(['param1' => 'Something', 'param2' => 3], (array) $result);
     }
 
-    private function newSubject(): StubObjects
+    private function newSubject(array $stubbable_class_patterns = ['*']): StubObjects
     {
-        return new StubObjects();
+        return new StubObjects(...get_defined_vars());
     }
 
 }

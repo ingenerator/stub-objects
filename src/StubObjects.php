@@ -10,9 +10,13 @@ use Throwable;
 
 class StubObjects
 {
+    private readonly StubbingContext $context;
+
     public function __construct(
+        private readonly array $stubbable_class_patterns,
         private readonly StubFactoryConfigurator $factory_config = new AttributeOrDefaultStubFactoryConfigurator(),
     ) {
+        $this->context = new StubbingContext($this, $this->stubbable_class_patterns);
     }
 
     /**
@@ -27,7 +31,7 @@ class StubObjects
             $reflection = new ReflectionClass($class);
             $factory = $this->factory_config->getStubFactory($reflection);
 
-            return $factory->make($values);
+            return $factory->make($values, $this->context);
         } catch (Throwable $e) {
             throw new FailedToStubObjectException(
                 sprintf('Could not stub a %s: [%s] %s', $class, $e::class, $e->getMessage()),

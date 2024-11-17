@@ -12,10 +12,12 @@ use Ingenerator\StubObjects\Attribute\StubDefault\StubDefaultValue;
 use Ingenerator\StubObjects\Configurator\AttributeOrGuessStubDefaultConfigurator;
 use Ingenerator\StubObjects\Guesser\StubDefaultGuesser;
 use Ingenerator\StubObjects\Guesser\StubDefaultGuesser\StubDefaultNullGuesser;
+use Ingenerator\StubObjects\StubbingContext;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionProperty;
+use test\TestUtils;
 
 class AttributeOrGuessStubDefaultConfiguratorTest extends TestCase
 {
@@ -26,7 +28,10 @@ class AttributeOrGuessStubDefaultConfiguratorTest extends TestCase
             #[StubDefaultValue('whatever')]
             private readonly mixed $foo;
         };
-        $provider = $this->newSubject()->getDefaultValueProvider($this->getReflectionProperty($class::class, 'foo'));
+        $provider = $this->newSubject()->getDefaultValueProvider(
+            $this->getReflectionProperty($class::class, 'foo'),
+            TestUtils::fakeStubbingContext(),
+        );
         $this->assertInstanceOf(StubDefaultValue::class, $provider);
         $this->assertSame('whatever', $provider->getValue([]));
     }
@@ -37,7 +42,10 @@ class AttributeOrGuessStubDefaultConfiguratorTest extends TestCase
             #[MyCustomProvider([1, 923])]
             private readonly mixed $foo;
         };
-        $provider = $this->newSubject()->getDefaultValueProvider($this->getReflectionProperty($class::class, 'foo'));
+        $provider = $this->newSubject()->getDefaultValueProvider(
+            $this->getReflectionProperty($class::class, 'foo'),
+            TestUtils::fakeStubbingContext(),
+        );
         $this->assertInstanceOf(MyCustomProvider::class, $provider);
         $this->assertSame([1, 923], $provider->getValue([]));
     }
@@ -54,7 +62,7 @@ class AttributeOrGuessStubDefaultConfiguratorTest extends TestCase
         $subject = $this->newSubject();
         $this->expectException(DomainException::class);
         $this->expectExceptionMessage('only one DefaultValueProvider');
-        $subject->getDefaultValueProvider($prop);
+        $subject->getDefaultValueProvider($prop, TestUtils::fakeStubbingContext());
     }
 
     #[TestWith(['foo', NULL])]
@@ -63,7 +71,7 @@ class AttributeOrGuessStubDefaultConfiguratorTest extends TestCase
     {
         $guessers = [
             new class implements StubDefaultGuesser {
-                public function guessProvider(ReflectionProperty $property): false|StubDefault
+                public function guessProvider(ReflectionProperty $property, StubbingContext $context): false|StubDefault
                 {
                     return match ($property->getName() === 'foo') {
                         FALSE => FALSE,
@@ -72,7 +80,7 @@ class AttributeOrGuessStubDefaultConfiguratorTest extends TestCase
                 }
             },
             new class implements StubDefaultGuesser {
-                public function guessProvider(ReflectionProperty $property): false|StubDefault
+                public function guessProvider(ReflectionProperty $property, StubbingContext $context): false|StubDefault
                 {
                     return match ($property->getName() === 'bar') {
                         FALSE => FALSE,
@@ -87,7 +95,10 @@ class AttributeOrGuessStubDefaultConfiguratorTest extends TestCase
         };
         $provider = $this
             ->newSubject(guessers: $guessers)
-            ->getDefaultValueProvider($this->getReflectionProperty($class::class, $property));
+            ->getDefaultValueProvider(
+                $this->getReflectionProperty($class::class, $property),
+                TestUtils::fakeStubbingContext(),
+            );
 
         $this->assertInstanceOf(StubDefault::class, $provider);
         $this->assertSame($expect_value, $provider->getValue([]));
@@ -101,7 +112,10 @@ class AttributeOrGuessStubDefaultConfiguratorTest extends TestCase
         };
         $this->expectException(DomainException::class);
         $this->expectExceptionMessage('Could not guess a default value for `string $foo`');
-        $subject->getDefaultValueProvider($this->getReflectionProperty($class::class, 'foo'));
+        $subject->getDefaultValueProvider(
+            $this->getReflectionProperty($class::class, 'foo'),
+            TestUtils::fakeStubbingContext(),
+        );
     }
 
     private function newSubject(array $guessers = []): AttributeOrGuessStubDefaultConfigurator

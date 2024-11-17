@@ -7,6 +7,7 @@ use DomainException;
 use Ingenerator\StubObjects\Attribute\StubDefault;
 use Ingenerator\StubObjects\Guesser\StubDefaultGuesser;
 use Ingenerator\StubObjects\StandardConfig;
+use Ingenerator\StubObjects\StubbingContext;
 use ReflectionAttribute;
 use ReflectionProperty;
 
@@ -22,7 +23,7 @@ class AttributeOrGuessStubDefaultConfigurator implements StubDefaultConfigurator
         $this->guessers = $guessers ?? StandardConfig::loadDefaultValueGuessers();
     }
 
-    public function getDefaultValueProvider(ReflectionProperty $property): StubDefault
+    public function getDefaultValueProvider(ReflectionProperty $property, StubbingContext $context): StubDefault
     {
         $attrs = $property->getAttributes(StubDefault::class, ReflectionAttribute::IS_INSTANCEOF);
         if ($attrs) {
@@ -30,7 +31,7 @@ class AttributeOrGuessStubDefaultConfigurator implements StubDefaultConfigurator
         }
 
         foreach ($this->guessers as $guesser) {
-            if ($provider = $guesser->guessProvider($property)) {
+            if ($provider = $guesser->guessProvider($property, $context)) {
                 return $provider;
             }
         }

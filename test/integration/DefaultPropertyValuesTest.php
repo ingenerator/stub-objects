@@ -210,8 +210,8 @@ class DefaultPropertyValuesTest extends TestCase
         $this->assertLessThanOrEqual($time_after, $result->created_at);
     }
 
-    private function newSubject(): StubObjects
+    private function newSubject(array $stubbable_class_patterns = ['*']): StubObjects
     {
-        return new StubObjects();
+        return new StubObjects(...get_defined_vars());
     }
 }
