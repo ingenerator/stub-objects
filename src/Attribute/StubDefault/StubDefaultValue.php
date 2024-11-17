@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Ingenerator\StubObjects\Attribute\DefaultValue;
+namespace Ingenerator\StubObjects\Attribute\StubDefault;
 
 use Attribute;
-use Ingenerator\StubObjects\Attribute\DefaultStubValueProvider;
+use Ingenerator\StubObjects\Attribute\StubDefault;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-readonly class StubDefaultValue implements DefaultStubValueProvider
+readonly class StubDefaultValue implements StubDefault
 {
     public function __construct(private mixed $value)
     {

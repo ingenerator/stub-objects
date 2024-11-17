@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace test\integration;
 
 use DateTimeImmutable;
-use Ingenerator\StubObjects\Attribute\DefaultValue\StubDefaultValue;
-use Ingenerator\StubObjects\Attribute\DefaultValue\StubRandomString;
-use Ingenerator\StubObjects\Attribute\DefaultValue\StubSequentialId;
 use Ingenerator\StubObjects\Attribute\StubAs\StubAsDateTime;
+use Ingenerator\StubObjects\Attribute\StubDefault\StubDefaultRandomString;
+use Ingenerator\StubObjects\Attribute\StubDefault\StubDefaultSequentialId;
+use Ingenerator\StubObjects\Attribute\StubDefault\StubDefaultValue;
 use Ingenerator\StubObjects\StubObjectFactory;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -108,10 +108,10 @@ class DefaultPropertyValuesTest extends TestCase
     public function test_it_can_default_properties_to_a_sequential_id()
     {
         $class = new readonly class {
-            #[StubSequentialId]
+            #[StubDefaultSequentialId]
             public ?int $id;
 
-            #[StubSequentialId]
+            #[StubDefaultSequentialId]
             public int $other_id;
 
             public ?int $other_number;
@@ -158,7 +158,7 @@ class DefaultPropertyValuesTest extends TestCase
             // Is mapped by default
             public string $name;
             // Is mapped explicitly
-            #[StubRandomString(length: 6, chars: 'abcdefghijklmnopqrstuvwxyz')]
+            #[StubDefaultRandomString(length: 6, chars: 'abcdefghijklmnopqrstuvwxyz')]
             public string $token;
         };
 

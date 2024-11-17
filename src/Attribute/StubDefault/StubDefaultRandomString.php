@@ -1,13 +1,13 @@
 <?php
 
-namespace Ingenerator\StubObjects\Attribute\DefaultValue;
+namespace Ingenerator\StubObjects\Attribute\StubDefault;
 
 use Attribute;
-use Ingenerator\StubObjects\Attribute\DefaultStubValueProvider;
+use Ingenerator\StubObjects\Attribute\StubDefault;
 use Random\Randomizer;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-readonly class StubRandomString implements DefaultStubValueProvider
+readonly class StubDefaultRandomString implements StubDefault
 {
     public const ALPHANUMERIC = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ12345678';
 

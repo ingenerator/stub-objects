@@ -1,20 +1,20 @@
 <?php
 
-namespace test\unit\DefaultValueGuesser;
+namespace test\unit\Guesser\StubDefault;
 
 use DateTimeImmutable;
-use Ingenerator\StubObjects\Attribute\DefaultValue\StubDefaultValue;
-use Ingenerator\StubObjects\DefaultValueGuesser\StubbableObjectValueGuesser;
+use Ingenerator\StubObjects\Attribute\StubDefault\StubDefaultValue;
+use Ingenerator\StubObjects\Guesser\StubDefaultGuesser\StubDefaultStubbableObjectGuesser;
 use Random\Randomizer;
 
-class StubbableObjectValueGuesserTest extends BaseDefaultValueProviderGuesserTestCase
+class StubDefaultStubbableObjectGuesserTest extends BaseStubDefaultGuesserTestCase
 {
     public function test_it_guesses_an_empty_object_for_anything_it_thinks_is_stubbable()
     {
         $class = new class {
             private DateTimeImmutable $date_time;
             private Randomizer $randomizer;
-            private StubbableObjectValueGuesserTest $stubbable_1;
+            private StubDefaultStubbableObjectGuesserTest $stubbable_1;
         };
 
         $this->assertGuesses(
@@ -25,7 +25,7 @@ class StubbableObjectValueGuesserTest extends BaseDefaultValueProviderGuesserTes
                 'stubbable_1' => [StubDefaultValue::class => []],
             ],
             $class::class,
-            new StubbableObjectValueGuesser(),
+            new StubDefaultStubbableObjectGuesser(),
         );
 
         $this->markTestIncomplete(

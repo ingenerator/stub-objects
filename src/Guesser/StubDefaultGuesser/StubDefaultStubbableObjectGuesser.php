@@ -1,14 +1,15 @@
 <?php
 
-namespace Ingenerator\StubObjects\DefaultValueGuesser;
+namespace Ingenerator\StubObjects\Guesser\StubDefaultGuesser;
 
-use Ingenerator\StubObjects\Attribute\DefaultStubValueProvider;
-use Ingenerator\StubObjects\Attribute\DefaultValue\StubDefaultValue;
+use Ingenerator\StubObjects\Attribute\StubDefault;
+use Ingenerator\StubObjects\Attribute\StubDefault\StubDefaultValue;
+use Ingenerator\StubObjects\Guesser\StubDefaultGuesser;
 use ReflectionProperty;
 
-class StubbableObjectValueGuesser implements DefaultValueProviderGuesser
+class StubDefaultStubbableObjectGuesser implements StubDefaultGuesser
 {
-    public function guessProvider(ReflectionProperty $property): false|DefaultStubValueProvider
+    public function guessProvider(ReflectionProperty $property): false|StubDefault
     {
         if ($property->getType()->isBuiltin()) {
             return false;

@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace test\unit\DefaultValueGuesser;
+namespace test\unit\Guesser\StubDefault;
 
 use DateTimeImmutable;
-use Ingenerator\StubObjects\Attribute\DefaultValue\StubDefaultValue;
-use Ingenerator\StubObjects\DefaultValueGuesser\StubDateTimeValueGuesser;
+use Ingenerator\StubObjects\Attribute\StubDefault\StubDefaultValue;
+use Ingenerator\StubObjects\Guesser\StubDefaultGuesser\StubDefualtDateTimeGuesser;
 
-class StubDateTimeValueGuesserTest extends BaseDefaultValueProviderGuesserTestCase
+class StubDefaultDateTimeGuesserTest extends BaseStubDefaultGuesserTestCase
 {
     public function test_it_guesses_current_time()
     {
@@ -22,7 +22,7 @@ class StubDateTimeValueGuesserTest extends BaseDefaultValueProviderGuesserTestCa
                 'string' => FALSE,
             ],
             $class::class,
-            new StubDateTimeValueGuesser,
+            new StubDefualtDateTimeGuesser,
         );
     }
 }

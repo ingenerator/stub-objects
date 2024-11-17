@@ -1,13 +1,14 @@
 <?php
 
-namespace Ingenerator\StubObjects\DefaultValueGuesser;
+namespace Ingenerator\StubObjects\Guesser\StubDefaultGuesser;
 
-use Ingenerator\StubObjects\Attribute\DefaultStubValueProvider;
-use Ingenerator\StubObjects\Attribute\DefaultValue\StubRandomString;
+use Ingenerator\StubObjects\Attribute\StubDefault;
+use Ingenerator\StubObjects\Attribute\StubDefault\StubDefaultRandomString;
+use Ingenerator\StubObjects\Guesser\StubDefaultGuesser;
 use Random\Randomizer;
 use ReflectionProperty;
 
-class StubStringValueGuesser implements DefaultValueProviderGuesser
+class StubDefaultStringGuesser implements StubDefaultGuesser
 {
     public function __construct(
         private Randomizer $randomizer = new Randomizer()
@@ -15,12 +16,12 @@ class StubStringValueGuesser implements DefaultValueProviderGuesser
 
     }
 
-    public function guessProvider(ReflectionProperty $property): false|DefaultStubValueProvider
+    public function guessProvider(ReflectionProperty $property): false|StubDefault
     {
         if ($property->getType()->getName() === 'string') {
             // @todo: guess email addresses for props with `email` in the name
             // @todo: guess URLs for props with `url` in the name
-            return new StubRandomString(
+            return new StubDefaultRandomString(
                 length: 16,
                 randomizer: $this->randomizer
             );

@@ -1,15 +1,16 @@
 <?php
 
-namespace Ingenerator\StubObjects\DefaultValueGuesser;
+namespace Ingenerator\StubObjects\Guesser\StubDefaultGuesser;
 
 use DateTimeImmutable;
-use Ingenerator\StubObjects\Attribute\DefaultStubValueProvider;
-use Ingenerator\StubObjects\Attribute\DefaultValue\StubDefaultValue;
+use Ingenerator\StubObjects\Attribute\StubDefault;
+use Ingenerator\StubObjects\Attribute\StubDefault\StubDefaultValue;
+use Ingenerator\StubObjects\Guesser\StubDefaultGuesser;
 use ReflectionProperty;
 
-class StubDateTimeValueGuesser implements DefaultValueProviderGuesser
+class StubDefualtDateTimeGuesser implements StubDefaultGuesser
 {
-    public function guessProvider(ReflectionProperty $property): false|DefaultStubValueProvider
+    public function guessProvider(ReflectionProperty $property): false|StubDefault
     {
         if ($property->getType()->getName() === DateTimeImmutable::class) {
             // Note that we're guessing this in string form, converting back to a DateTime happens at the

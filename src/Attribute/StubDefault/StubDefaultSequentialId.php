@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Ingenerator\StubObjects\Attribute\DefaultValue;
+namespace Ingenerator\StubObjects\Attribute\StubDefault;
 
 use Attribute;
-use Ingenerator\StubObjects\Attribute\DefaultStubValueProvider;
+use Ingenerator\StubObjects\Attribute\StubDefault;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-class StubSequentialId implements DefaultStubValueProvider
+class StubDefaultSequentialId implements StubDefault
 {
     private static int $next_id = 1;
 

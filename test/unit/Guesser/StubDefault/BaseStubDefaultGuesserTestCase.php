@@ -1,15 +1,15 @@
 <?php
 
-namespace test\unit\DefaultValueGuesser;
+namespace test\unit\Guesser\StubDefault;
 
-use Ingenerator\StubObjects\DefaultValueGuesser\DefaultValueProviderGuesser;
+use Ingenerator\StubObjects\Guesser\StubDefaultGuesser;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
-abstract class BaseDefaultValueProviderGuesserTestCase extends TestCase
+abstract class BaseStubDefaultGuesserTestCase extends TestCase
 {
 
-    protected function assertGuesses(array $expect_providers, string $class, DefaultValueProviderGuesser $guesser)
+    protected function assertGuesses(array $expect_providers, string $class, StubDefaultGuesser $guesser)
     {
         $reflection = new ReflectionClass($class);
 

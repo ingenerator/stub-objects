@@ -4,16 +4,16 @@ declare(strict_types=1);
 namespace Ingenerator\StubObjects\Configurator;
 
 use DomainException;
-use Ingenerator\StubObjects\Attribute\DefaultStubValueProvider;
-use Ingenerator\StubObjects\DefaultValueGuesser\DefaultValueProviderGuesser;
+use Ingenerator\StubObjects\Attribute\StubDefault;
+use Ingenerator\StubObjects\Guesser\StubDefaultGuesser;
 use Ingenerator\StubObjects\StandardConfig;
 use ReflectionAttribute;
 use ReflectionProperty;
 
-class AttributeOrGuessingDefaultValueConfigurator implements DefaultValueConfigurator
+class AttributeOrGuessStubDefaultConfigurator implements StubDefaultConfigurator
 {
     /**
-     * @var DefaultValueProviderGuesser[]
+     * @var StubDefaultGuesser[]
      */
     private readonly array $guessers;
 
@@ -22,9 +22,9 @@ class AttributeOrGuessingDefaultValueConfigurator implements DefaultValueConfigu
         $this->guessers = $guessers ?? StandardConfig::loadDefaultValueGuessers();
     }
 
-    public function getDefaultValueProvider(ReflectionProperty $property): DefaultStubValueProvider
+    public function getDefaultValueProvider(ReflectionProperty $property): StubDefault
     {
-        $attrs = $property->getAttributes(DefaultStubValueProvider::class, ReflectionAttribute::IS_INSTANCEOF);
+        $attrs = $property->getAttributes(StubDefault::class, ReflectionAttribute::IS_INSTANCEOF);
         if ($attrs) {
             return $this->returnSingleProviderFromAttributes($attrs, $property);
         }

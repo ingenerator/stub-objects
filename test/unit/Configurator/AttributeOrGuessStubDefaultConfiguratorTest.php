@@ -6,18 +6,18 @@ namespace test\unit\Configurator;
 
 use Attribute;
 use DomainException;
-use Ingenerator\StubObjects\Attribute\DefaultStubValueProvider;
-use Ingenerator\StubObjects\Attribute\DefaultValue\StubDefaultValue;
-use Ingenerator\StubObjects\Attribute\DefaultValue\StubNullValue;
-use Ingenerator\StubObjects\Configurator\AttributeOrGuessingDefaultValueConfigurator;
-use Ingenerator\StubObjects\DefaultValueGuesser\DefaultValueProviderGuesser;
-use Ingenerator\StubObjects\DefaultValueGuesser\StubNullValueGuesser;
+use Ingenerator\StubObjects\Attribute\StubDefault;
+use Ingenerator\StubObjects\Attribute\StubDefault\StubDefaultNull;
+use Ingenerator\StubObjects\Attribute\StubDefault\StubDefaultValue;
+use Ingenerator\StubObjects\Configurator\AttributeOrGuessStubDefaultConfigurator;
+use Ingenerator\StubObjects\Guesser\StubDefaultGuesser;
+use Ingenerator\StubObjects\Guesser\StubDefaultGuesser\StubDefaultNullGuesser;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionProperty;
 
-class AttributeOrGuessingDefaultValueConfiguratorTest extends TestCase
+class AttributeOrGuessStubDefaultConfiguratorTest extends TestCase
 {
 
     public function test_it_returns_predefined_value_provider_attribute()
@@ -62,17 +62,17 @@ class AttributeOrGuessingDefaultValueConfiguratorTest extends TestCase
     public function test_it_returns_guessed_provider_if_any(string $property, ?string $expect_value)
     {
         $guessers = [
-            new class implements DefaultValueProviderGuesser {
-                public function guessProvider(ReflectionProperty $property): false|DefaultStubValueProvider
+            new class implements StubDefaultGuesser {
+                public function guessProvider(ReflectionProperty $property): false|StubDefault
                 {
                     return match ($property->getName() === 'foo') {
                         FALSE => FALSE,
-                        TRUE => new StubNullValue(),
+                        TRUE => new StubDefaultNull(),
                     };
                 }
             },
-            new class implements DefaultValueProviderGuesser {
-                public function guessProvider(ReflectionProperty $property): false|DefaultStubValueProvider
+            new class implements StubDefaultGuesser {
+                public function guessProvider(ReflectionProperty $property): false|StubDefault
                 {
                     return match ($property->getName() === 'bar') {
                         FALSE => FALSE,
@@ -89,13 +89,13 @@ class AttributeOrGuessingDefaultValueConfiguratorTest extends TestCase
             ->newSubject(guessers: $guessers)
             ->getDefaultValueProvider($this->getReflectionProperty($class::class, $property));
 
-        $this->assertInstanceOf(DefaultStubValueProvider::class, $provider);
+        $this->assertInstanceOf(StubDefault::class, $provider);
         $this->assertSame($expect_value, $provider->getValue([]));
     }
 
     public function test_it_throws_if_no_guesser_can_find_a_default_provider()
     {
-        $subject = $this->newSubject(guessers: [new StubNullValueGuesser()]);
+        $subject = $this->newSubject(guessers: [new StubDefaultNullGuesser()]);
         $class = new class {
             private string $foo;
         };
@@ -104,13 +104,13 @@ class AttributeOrGuessingDefaultValueConfiguratorTest extends TestCase
         $subject->getDefaultValueProvider($this->getReflectionProperty($class::class, 'foo'));
     }
 
-    private function newSubject(array $guessers = []): AttributeOrGuessingDefaultValueConfigurator
+    private function newSubject(array $guessers = []): AttributeOrGuessStubDefaultConfigurator
     {
         $guessers ??= [
-            new StubNullValueGuesser(),
+            new StubDefaultNullGuesser(),
         ];
 
-        return new AttributeOrGuessingDefaultValueConfigurator($guessers);
+        return new AttributeOrGuessStubDefaultConfigurator($guessers);
     }
 
     private function getReflectionProperty(string $class, string $property): ReflectionProperty
@@ -122,7 +122,7 @@ class AttributeOrGuessingDefaultValueConfiguratorTest extends TestCase
 }
 
 #[Attribute]
-class MyCustomProvider implements DefaultStubValueProvider
+class MyCustomProvider implements StubDefault
 {
     public function __construct(private readonly array $parts)
     {
