@@ -8,7 +8,9 @@ use DateTimeImmutable;
 use DomainException;
 use Ingenerator\StubObjects\Attribute\Caster\StubAsDateTime;
 use Ingenerator\StubObjects\Attribute\StubValueCaster;
+use Ingenerator\StubObjects\CasterGuesser\CasterGuesser;
 use Ingenerator\StubObjects\Configurator\AttributeOrGuessingValueCasterConfigurator;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionProperty;
@@ -54,14 +56,34 @@ class AttributeOrGuessingValueCasterImplementationTest extends TestCase
         $subject->getCaster($prop, 'abc');
     }
 
-    public function test_it_returns_first_guessed_caster_if_untagged()
+    #[TestWith(['foo', StubAsDateTime::class])]
+    #[TestWith(['bar', FALSE])]
+    public function test_it_returns_first_guessed_caster_or_false_if_not_tagged(string $property, false|string $expect_caster)
     {
-        $this->markTestIncomplete();
-    }
+        $guessers = [
+            new class implements CasterGuesser {
+                public function guessCaster(ReflectionProperty $property): false|StubValueCaster
+                {
+                    return match ($property->getName() === 'foo') {
+                        FALSE => FALSE,
+                        TRUE => new StubAsDateTime()
+                    };
+                }
+            },
+        ];
+        $class = new class {
+            private DateTimeImmutable $foo;
+            private string $bar;
+        };
+        $provider = $this
+            ->newSubject(guessers: $guessers)
+            ->getCaster($this->getReflectionProperty($class::class, $property));
 
-    public function test_it_returns_false_if_no_caster_found()
-    {
-        $this->markTestIncomplete();
+        if ($expect_caster === FALSE) {
+            $this->assertFalse($provider);
+        } else {
+            $this->assertInstanceOf($expect_caster, $provider);
+        }
     }
 
     private function newSubject(array $guessers = []): AttributeOrGuessingValueCasterConfigurator

@@ -14,7 +14,7 @@ class StubAsDateTime implements StubValueCaster
     {
         // @todo sanity checks for the potential types of input
         // @todo support our DateParam syntax
-        if ($value instanceof DateTimeImmutable) {
+        if (($value === NULL) || ($value instanceof DateTimeImmutable)) {
             return $value;
         }
 

@@ -177,8 +177,6 @@ class DefaultPropertyValuesTest extends TestCase
     {
         $class = new readonly class {
             // Is mapped by default
-            // @todo or will be, when the guesser is implemented
-            #[StubAsDateTime]
             public DateTimeImmutable $created_at;
 
             // Is mapped explicitly
