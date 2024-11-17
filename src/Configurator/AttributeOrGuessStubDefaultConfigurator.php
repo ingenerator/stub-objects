@@ -6,7 +6,6 @@ namespace Ingenerator\StubObjects\Configurator;
 use DomainException;
 use Ingenerator\StubObjects\Attribute\StubDefault;
 use Ingenerator\StubObjects\Guesser\StubDefaultGuesser;
-use Ingenerator\StubObjects\StandardConfig;
 use Ingenerator\StubObjects\StubbingContext;
 use ReflectionAttribute;
 use ReflectionProperty;
@@ -14,13 +13,11 @@ use ReflectionProperty;
 class AttributeOrGuessStubDefaultConfigurator implements StubDefaultConfigurator
 {
     /**
-     * @var StubDefaultGuesser[]
+     * @param StubDefaultGuesser[] $guessers
      */
-    private readonly array $guessers;
-
-    public function __construct(?array $guessers = NULL)
-    {
-        $this->guessers = $guessers ?? StandardConfig::loadDefaultValueGuessers();
+    public function __construct(
+        private readonly array $guessers,
+    ) {
     }
 
     public function getDefaultValueProvider(ReflectionProperty $property, StubbingContext $context): StubDefault

@@ -10,6 +10,13 @@ use ReflectionClass;
 
 class AttributeOrDefaultStubFactoryConfigurator implements StubFactoryConfigurator
 {
+    public function __construct(
+        private readonly StubDefaultConfigurator $default_configurator,
+        private readonly StubAsConfigurator $stub_as_configurator,
+    ) {
+
+    }
+
     public function getStubFactory(ReflectionClass $class): StubFactoryImplementation
     {
         $attrs = $class->getAttributes(StubFactory::class);
@@ -17,7 +24,11 @@ class AttributeOrDefaultStubFactoryConfigurator implements StubFactoryConfigurat
             return $attrs[0]->newInstance()->getFactory();
         }
 
-        return new DefaultStubFactory($class);
+        return new DefaultStubFactory(
+            $class,
+            $this->default_configurator,
+            $this->stub_as_configurator,
+        );
     }
 
 }

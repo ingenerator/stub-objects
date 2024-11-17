@@ -6,7 +6,6 @@ namespace Ingenerator\StubObjects\Configurator;
 use DomainException;
 use Ingenerator\StubObjects\Attribute\StubAs;
 use Ingenerator\StubObjects\Guesser\StubAsGuesser;
-use Ingenerator\StubObjects\StandardConfig;
 use Ingenerator\StubObjects\StubbingContext;
 use ReflectionAttribute;
 use ReflectionProperty;
@@ -14,13 +13,11 @@ use ReflectionProperty;
 class AttributeOrGuessStubAsConfigurator implements StubAsConfigurator
 {
     /**
-     * @var StubAsGuesser[]
+     * @param StubAsGuesser[] $guessers
      */
-    private readonly array $guessers;
-
-    public function __construct(?array $guessers = NULL)
-    {
-        $this->guessers = $guessers ?? StandardConfig::loadCasterGuessers();
+    public function __construct(
+        private readonly array $guessers,
+    ) {
     }
 
     public function getCaster(ReflectionProperty $property, StubbingContext $context): false|StubAs

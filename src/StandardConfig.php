@@ -30,7 +30,6 @@ class StandardConfig
      */
     public static function loadDefaultValueGuessers(): array
     {
-        // @todo: I *think* we only want to load these once?
         return [
             new StubDefaultNullGuesser(),
             new StubDefualtDateTimeGuesser(),

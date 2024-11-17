@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace Ingenerator\StubObjects\Factory;
 
-use Ingenerator\StubObjects\Configurator\AttributeOrGuessStubAsConfigurator;
-use Ingenerator\StubObjects\Configurator\AttributeOrGuessStubDefaultConfigurator;
 use Ingenerator\StubObjects\Configurator\StubAsConfigurator;
 use Ingenerator\StubObjects\Configurator\StubDefaultConfigurator;
 use Ingenerator\StubObjects\DefaultValueProvider\AttributeBasedDefaultValueProvider;
@@ -21,8 +19,8 @@ class DefaultStubFactory implements StubFactoryImplementation
 
     public function __construct(
         private readonly ReflectionClass $target_reflection,
-        private readonly StubDefaultConfigurator $default_vals = new AttributeOrGuessStubDefaultConfigurator(),
-        private readonly StubAsConfigurator $value_casters = new AttributeOrGuessStubAsConfigurator(),
+        private readonly StubDefaultConfigurator $default_vals,
+        private readonly StubAsConfigurator $value_casters,
     ) {
 
     }

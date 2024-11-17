@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace Ingenerator\StubObjects;
 
 use Ingenerator\StubObjects\Configurator\AttributeOrDefaultStubFactoryConfigurator;
+use Ingenerator\StubObjects\Configurator\AttributeOrGuessStubAsConfigurator;
+use Ingenerator\StubObjects\Configurator\AttributeOrGuessStubDefaultConfigurator;
 use Ingenerator\StubObjects\Configurator\StubFactoryConfigurator;
 use ReflectionClass;
 use Throwable;
@@ -11,12 +13,17 @@ use Throwable;
 class StubObjects
 {
     private readonly StubbingContext $context;
+    private readonly StubFactoryConfigurator $factory_config;
 
     public function __construct(
         private readonly array $stubbable_class_patterns,
-        private readonly StubFactoryConfigurator $factory_config = new AttributeOrDefaultStubFactoryConfigurator(),
+        ?StubFactoryConfigurator $factory_config = NULL,
     ) {
         $this->context = new StubbingContext($this, $this->stubbable_class_patterns);
+        $this->factory_config = $factory_config ?? new AttributeOrDefaultStubFactoryConfigurator(
+            new AttributeOrGuessStubDefaultConfigurator(StandardConfig::loadDefaultValueGuessers()),
+            new AttributeOrGuessStubAsConfigurator(StandardConfig::loadCasterGuessers()),
+        );
     }
 
     /**

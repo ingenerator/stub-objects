@@ -6,6 +6,8 @@ namespace test\unit\Configurator;
 use Error;
 use Ingenerator\StubObjects\Attribute\StubFactory;
 use Ingenerator\StubObjects\Configurator\AttributeOrDefaultStubFactoryConfigurator;
+use Ingenerator\StubObjects\Configurator\StubAsConfigurator;
+use Ingenerator\StubObjects\Configurator\StubDefaultConfigurator;
 use Ingenerator\StubObjects\Factory\CallableStubFactory;
 use Ingenerator\StubObjects\Factory\DefaultStubFactory;
 use PHPUnit\Framework\TestCase;
@@ -50,7 +52,10 @@ class AttributeOrDefaultStubFactoryConfiguratorTest extends TestCase
 
     private function newSubject(): AttributeOrDefaultStubFactoryConfigurator
     {
-        return new AttributeOrDefaultStubFactoryConfigurator();
+        return new AttributeOrDefaultStubFactoryConfigurator(
+            $this->createStub(StubDefaultConfigurator::class),
+            $this->createStub(StubAsConfigurator::class),
+        );
     }
 
 }
