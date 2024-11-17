@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Ingenerator\StubObjects\Factory;
 
+use Ingenerator\StubObjects\Attribute\StubAs;
+use Ingenerator\StubObjects\Attribute\StubDefault;
 use Ingenerator\StubObjects\Configurator\StubAsConfigurator;
 use Ingenerator\StubObjects\Configurator\StubDefaultConfigurator;
 use Ingenerator\StubObjects\DefaultValueProvider\AttributeBasedDefaultValueProvider;
@@ -16,6 +18,16 @@ class DefaultStubFactory implements StubFactoryImplementation
     private const int FILTER_INSTANCE_PROPERTIES = ReflectionProperty::IS_PUBLIC
                                                    | ReflectionProperty::IS_PROTECTED
                                                    | ReflectionProperty::IS_PRIVATE;
+
+    /**
+     * @var array<string,StubDefault>
+     */
+    private array $stub_default_cache = [];
+
+    /**
+     * @var array<string,StubAs>
+     */
+    private array $stub_as_cache = [];
 
     public function __construct(
         private readonly ReflectionClass $target_reflection,
@@ -35,14 +47,7 @@ class DefaultStubFactory implements StubFactoryImplementation
         // Create the instance and apply customised values to it
         $instance = $this->target_reflection->newInstance();
         foreach ($values as $prop_name => $value) {
-            $property = $this->target_reflection->getProperty($prop_name);
-            // @todo: splitting getting the $caster here is again because this should be cacheable for a class
-            $caster = $this->value_casters->getCaster($property, $context);
-            if ($caster) {
-                $value = $caster->cast($prop_name, $value, $context);
-            }
-
-            $property->setValue($instance, $value);
+            $this->castAndSetPropertyValue($prop_name, $context, $value, $instance);
         }
 
         return $instance;
@@ -64,11 +69,32 @@ class DefaultStubFactory implements StubFactoryImplementation
                 continue;
             }
 
-            // @todo this chaining is because we can probably cache the getDefaultValueProviders for each class
-            $defaults[$prop_name] = $this->default_vals->getDefaultValueProvider($prop, $context)->getValue([]);
+            // Find the StubDefault provider for this property and cache it for re-use on other objects
+            $this->stub_default_cache[$prop_name] ??= $this->default_vals->getDefaultValueProvider($prop, $context);
+
+            $defaults[$prop_name] = $this->stub_default_cache[$prop_name]->getValue($values);
         }
 
         return $defaults;
+    }
+
+    private function castAndSetPropertyValue(
+        string $prop_name,
+        StubbingContext $context,
+        mixed $value,
+        object $instance
+    ): void {
+        $property = $this->target_reflection->getProperty($prop_name);
+
+        // Load and cache the caster for this property (which may be `false`)
+        // Then cast the value to the expected type
+        $this->stub_as_cache[$prop_name] ??= $this->value_casters->getCaster($property, $context);
+        if ($this->stub_as_cache[$prop_name]) {
+            $value = $this->stub_as_cache[$prop_name]->cast($prop_name, $value, $context);
+        }
+
+        // And finally apply to the new object instance
+        $property->setValue($instance, $value);
     }
 
 }
