@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace test\integration;
 
 use DateTimeImmutable;
-use Ingenerator\StubObjects\Attribute\Caster\StubAsDateTime;
 use Ingenerator\StubObjects\Attribute\DefaultValue\StubDefaultValue;
 use Ingenerator\StubObjects\Attribute\DefaultValue\StubRandomString;
 use Ingenerator\StubObjects\Attribute\DefaultValue\StubSequentialId;
+use Ingenerator\StubObjects\Attribute\StubAs\StubAsDateTime;
 use Ingenerator\StubObjects\StubObjectFactory;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;

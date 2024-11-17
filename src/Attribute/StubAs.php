@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Ingenerator\StubObjects\Attribute;
 
-interface StubValueCaster
+interface StubAs
 {
     public function cast(string $property, mixed $value): mixed;
 }

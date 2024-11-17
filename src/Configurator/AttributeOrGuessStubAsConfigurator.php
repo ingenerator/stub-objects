@@ -4,16 +4,16 @@ declare(strict_types=1);
 namespace Ingenerator\StubObjects\Configurator;
 
 use DomainException;
-use Ingenerator\StubObjects\Attribute\StubValueCaster;
-use Ingenerator\StubObjects\CasterGuesser\CasterGuesser;
+use Ingenerator\StubObjects\Attribute\StubAs;
+use Ingenerator\StubObjects\Guesser\StubAsGuesser;
 use Ingenerator\StubObjects\StandardConfig;
 use ReflectionAttribute;
 use ReflectionProperty;
 
-class AttributeOrGuessingValueCasterConfigurator implements ValueCasterConfigurator
+class AttributeOrGuessStubAsConfigurator implements StubAsConfigurator
 {
     /**
-     * @var CasterGuesser[]
+     * @var StubAsGuesser[]
      */
     private readonly array $guessers;
 
@@ -22,9 +22,9 @@ class AttributeOrGuessingValueCasterConfigurator implements ValueCasterConfigura
         $this->guessers = $guessers ?? StandardConfig::loadCasterGuessers();
     }
 
-    public function getCaster(ReflectionProperty $property): false|StubValueCaster
+    public function getCaster(ReflectionProperty $property): false|StubAs
     {
-        $attrs = $property->getAttributes(StubValueCaster::class, ReflectionAttribute::IS_INSTANCEOF);
+        $attrs = $property->getAttributes(StubAs::class, ReflectionAttribute::IS_INSTANCEOF);
         if ($attrs) {
             return $this->returnSingleProviderFromAttributes($attrs, $property);
         }
@@ -39,7 +39,7 @@ class AttributeOrGuessingValueCasterConfigurator implements ValueCasterConfigura
     }
 
 
-    private function returnSingleProviderFromAttributes(array $attrs, ReflectionProperty $property): StubValueCaster
+    private function returnSingleProviderFromAttributes(array $attrs, ReflectionProperty $property): StubAs
     {
         if (count($attrs) > 1) {
             throw new DomainException(

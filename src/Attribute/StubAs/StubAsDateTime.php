@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace Ingenerator\StubObjects\Attribute\Caster;
+namespace Ingenerator\StubObjects\Attribute\StubAs;
 
 use Attribute;
 use DateTimeImmutable;
-use Ingenerator\StubObjects\Attribute\StubValueCaster;
+use Ingenerator\StubObjects\Attribute\StubAs;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-class StubAsDateTime implements StubValueCaster
+class StubAsDateTime implements StubAs
 {
     public function cast(string $property, mixed $value): mixed
     {

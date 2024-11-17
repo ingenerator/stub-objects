@@ -6,16 +6,16 @@ namespace test\unit\Configurator;
 use Attribute;
 use DateTimeImmutable;
 use DomainException;
-use Ingenerator\StubObjects\Attribute\Caster\StubAsDateTime;
-use Ingenerator\StubObjects\Attribute\StubValueCaster;
-use Ingenerator\StubObjects\CasterGuesser\CasterGuesser;
-use Ingenerator\StubObjects\Configurator\AttributeOrGuessingValueCasterConfigurator;
+use Ingenerator\StubObjects\Attribute\StubAs;
+use Ingenerator\StubObjects\Attribute\StubAs\StubAsDateTime;
+use Ingenerator\StubObjects\Configurator\AttributeOrGuessStubAsConfigurator;
+use Ingenerator\StubObjects\Guesser\StubAsGuesser;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionProperty;
 
-class AttributeOrGuessingValueCasterImplementationTest extends TestCase
+class AttributeOrGuessStubAsConfiguratorTest extends TestCase
 {
 
     public function test_it_casts_with_predefined_caster_attribute()
@@ -61,8 +61,8 @@ class AttributeOrGuessingValueCasterImplementationTest extends TestCase
     public function test_it_returns_first_guessed_caster_or_false_if_not_tagged(string $property, false|string $expect_caster)
     {
         $guessers = [
-            new class implements CasterGuesser {
-                public function guessCaster(ReflectionProperty $property): false|StubValueCaster
+            new class implements StubAsGuesser {
+                public function guessCaster(ReflectionProperty $property): false|StubAs
                 {
                     return match ($property->getName() === 'foo') {
                         FALSE => FALSE,
@@ -86,9 +86,9 @@ class AttributeOrGuessingValueCasterImplementationTest extends TestCase
         }
     }
 
-    private function newSubject(array $guessers = []): AttributeOrGuessingValueCasterConfigurator
+    private function newSubject(array $guessers = []): AttributeOrGuessStubAsConfigurator
     {
-        return new AttributeOrGuessingValueCasterConfigurator($guessers);
+        return new AttributeOrGuessStubAsConfigurator($guessers);
     }
 
     private function getReflectionProperty(string $class, string $property): ReflectionProperty
@@ -101,7 +101,7 @@ class AttributeOrGuessingValueCasterImplementationTest extends TestCase
 }
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-class MyReversingCaster implements StubValueCaster
+class MyReversingCaster implements StubAs
 {
     public function cast(string $property, mixed $value): mixed
     {

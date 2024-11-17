@@ -1,15 +1,15 @@
 <?php
 
-namespace test\unit\CasterGuesser;
+namespace test\unit\Guesser\StubAs;
 
-use Ingenerator\StubObjects\CasterGuesser\CasterGuesser;
+use Ingenerator\StubObjects\Guesser\StubAsGuesser;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
-abstract class BaseCasterGuesserTestCase extends TestCase
+abstract class BaseStubAsGuesserTestCase extends TestCase
 {
 
-    protected function assertGuesses(array $expect_providers, string $class, CasterGuesser $guesser)
+    protected function assertGuesses(array $expect_providers, string $class, StubAsGuesser $guesser)
     {
         $reflection = new ReflectionClass($class);
 

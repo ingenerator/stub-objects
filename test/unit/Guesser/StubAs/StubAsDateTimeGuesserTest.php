@@ -1,12 +1,12 @@
 <?php
 
-namespace test\unit\CasterGuesser;
+namespace test\unit\Guesser\StubAs;
 
 use DateTimeImmutable;
-use Ingenerator\StubObjects\Attribute\Caster\StubAsDateTime;
-use Ingenerator\StubObjects\CasterGuesser\StubAsDateTimeGuesser;
+use Ingenerator\StubObjects\Attribute\StubAs\StubAsDateTime;
+use Ingenerator\StubObjects\Guesser\StubAsGuesser\StubAsDateTimeGuesser;
 
-class StubAsDateTimeGuesserTestCase extends BaseCasterGuesserTestCase
+class StubAsDateTimeGuesserTest extends BaseStubAsGuesserTestCase
 {
 
     public function test_it_guesses_date_time_for_date_time_props()
