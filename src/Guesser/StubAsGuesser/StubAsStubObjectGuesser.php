@@ -12,12 +12,13 @@ class StubAsStubObjectGuesser implements StubAsGuesser
 {
     public function guessCaster(ReflectionProperty $property, StubbingContext $context): false|StubAs
     {
-        if ($property->getType()->isBuiltin()) {
+        // @todo: test with untyped props
+        if ($property->getType()?->isBuiltin()) {
             return FALSE;
         }
 
-        $class = $property->getType()->getName();
-        if ($context->isStubbable($class)) {
+        $class = $property->getType()?->getName();
+        if ($class && $context->isStubbable($class)) {
             return new StubAsStubObject($class);
         }
 

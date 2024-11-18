@@ -13,7 +13,8 @@ class StubAsDateTimeGuesser implements StubAsGuesser
 {
     public function guessCaster(ReflectionProperty $property, StubbingContext $context): false|StubAs
     {
-        if ($property->getType()->getName() === DateTimeImmutable::class) {
+        // @todo test with untyped props
+        if ($property->getType()?->getName() === DateTimeImmutable::class) {
             return new StubAsDateTime();
         }
 

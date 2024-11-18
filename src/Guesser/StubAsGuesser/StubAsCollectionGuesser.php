@@ -13,7 +13,8 @@ class StubAsCollectionGuesser implements StubAsGuesser
 {
     public function guessCaster(ReflectionProperty $property, StubbingContext $context): false|StubAs
     {
-        if ($property->getType()->getName() === Collection::class) {
+        // @todo: test with untyped props
+        if ($property->getType()?->getName() === Collection::class) {
             $collected_class = $this->parseItemClass($property);
 
             return new StubAsCollection($property->getType()->getName(), $collected_class);
