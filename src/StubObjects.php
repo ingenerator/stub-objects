@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Ingenerator\StubObjects;
 
+use Ingenerator\StubObjects\Attribute\StubMockClass;
 use Ingenerator\StubObjects\Configurator\AttributeOrDefaultStubFactoryConfigurator;
 use Ingenerator\StubObjects\Configurator\AttributeOrGuessStubAsConfigurator;
 use Ingenerator\StubObjects\Configurator\AttributeOrGuessStubDefaultConfigurator;
@@ -55,8 +56,19 @@ class StubObjects
 
     private function makeFactory(string $class): Factory\StubFactoryImplementation
     {
-        $reflection = new ReflectionClass($class);
+        $reflection = $this->getMockClassReflection(new ReflectionClass($class));
 
         return $this->factory_config->getStubFactory($reflection);
+    }
+
+    private function getMockClassReflection(ReflectionClass $class): ReflectionClass
+    {
+        // Check if this class has been tagged to be stubbed as a custom class
+        if ($attrs = $class->getAttributes(StubMockClass::class)) {
+            return new ReflectionClass($attrs[0]->getArguments()[0]);
+        }
+
+        // If not, we'll stub it as an instance of itself
+        return $class;
     }
 }
