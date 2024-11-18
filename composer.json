@@ -1,0 +1,37 @@
+{
+    "name": "ingenerator/stub-objects",
+    "description": "Modern solution for easily building strictly-typed data objects and entities for tests",
+    "homepage": "https://github.com/ingenerator/stub-objects",
+    "type": "library",
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Andrew Coulton",
+            "email": "andrew@ingenerator.com"
+        }
+    ],
+    "require": {
+        "php": "~8.3.0 || ~8.4.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.0"
+    },
+    "support": {
+        "source": "https://github.com/ingenerator/stub-objects",
+        "issues": "https://github.com/ingenerator/stub-objects/issues"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ingenerator\\StubObjects\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "test\\unit\\Ingenerator\\StubObjects\\": "test"
+        }
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true
+    }
+}
