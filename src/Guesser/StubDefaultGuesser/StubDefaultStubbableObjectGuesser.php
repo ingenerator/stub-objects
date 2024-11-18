@@ -2,6 +2,7 @@
 
 namespace Ingenerator\StubObjects\Guesser\StubDefaultGuesser;
 
+use Doctrine\Common\Collections\Collection;
 use Ingenerator\StubObjects\Attribute\StubDefault;
 use Ingenerator\StubObjects\Attribute\StubDefault\StubDefaultValue;
 use Ingenerator\StubObjects\Guesser\StubDefaultGuesser;
@@ -16,17 +17,30 @@ class StubDefaultStubbableObjectGuesser implements StubDefaultGuesser
             return FALSE;
         }
 
-        if ( ! $context->isStubbable($property->getType()->getName())) {
-            // Only set a default value for classes we expect to be able to stub, otherwise
-            // users will get hard to trace "can't assign array to property of type ..."
+        if ($this->isStubbable($context, $property)) {
+            // Note that we are defaulting to [] here to signify an empty object. Mapping that into
+            // the object happens when we hydrate the stub, because the value from the user might also
+            // be an array.
+            return new StubDefaultValue([]);
+        }
+
+        return FALSE;
+    }
+
+    private function isStubbable(StubbingContext $context, ReflectionProperty $property): bool
+    {
+        $type = $property->getType();
+        if ($type->isBuiltin()) {
             return FALSE;
         }
 
-        // Note that we are defaulting to [] here to signify an empty object. Mapping that into
-        // the object happens when we hydrate the stub, because the value from the user might also
-        // be an array.
-        return new StubDefaultValue([]);
-    }
+        if ($type->getName() === Collection::class) {
+            // Treat collections as a special case, we'll recursively attempt to cast arrays to collections
+            return TRUE;
+        }
 
+        // Otherwise it depends if they've configured recursion
+        return $context->isStubbable($property->getType()->getName());
+    }
 
 }

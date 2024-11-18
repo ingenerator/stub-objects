@@ -3,6 +3,7 @@
 namespace test\unit\Guesser\StubDefault;
 
 use DateTimeImmutable;
+use Doctrine\Common\Collections\Collection;
 use Ingenerator\StubObjects\Attribute\StubDefault\StubDefaultValue;
 use Ingenerator\StubObjects\Guesser\StubDefaultGuesser\StubDefaultStubbableObjectGuesser;
 use Random\Randomizer;
@@ -16,6 +17,9 @@ class StubDefaultStubbableObjectGuesserTest extends BaseStubDefaultGuesserTestCa
             private DateTimeImmutable $date_time;
             private Randomizer $randomizer;
             private MyChildStubbable $not_null_stubbable;
+
+            private Collection $collection_stubbable;
+
         };
 
         $this->assertGuesses(
@@ -23,6 +27,7 @@ class StubDefaultStubbableObjectGuesserTest extends BaseStubDefaultGuesserTestCa
                 'date_time' => FALSE,
                 'randomizer' => FALSE,
                 'not_null_stubbable' => [StubDefaultValue::class => []],
+                'collection_stubbable' => [StubDefaultValue::class => []],
             ],
             $class::class,
             new StubDefaultStubbableObjectGuesser(),
