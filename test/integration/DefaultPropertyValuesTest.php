@@ -136,19 +136,36 @@ class DefaultPropertyValuesTest extends TestCase
 
     public function test_it_can_default_properties_to_a_fixed_value()
     {
-        $class = new readonly class {
+        $class = new class {
             #[StubDefaultValue('whatever')]
             public ?string $status;
+
+            #[StubDefaultValue('tagged-default')]
+            public string $overridden = 'class-default';
+
+            public string $not_overridden = 'class-own-default';
         };
 
         $this->assertSame(
-            ['status' => 'whatever'],
+            [
+                'status' => 'whatever',
+                'overridden' => 'tagged-default',
+                'not_overridden' => 'class-own-default',
+            ],
             (array) $this->newSubject()->stub($class::class, [])
         );
 
         $this->assertSame(
-            ['status' => 'foo'],
-            (array) $this->newSubject()->stub($class::class, ['status' => 'foo'])
+            [
+                'status' => 'foo',
+                'overridden' => 'bar',
+                'not_overridden' => 'baz',
+            ],
+            (array) $this->newSubject()->stub($class::class, [
+                'status' => 'foo',
+                'overridden' => 'bar',
+                'not_overridden' => 'baz',
+            ])
         );
     }
 

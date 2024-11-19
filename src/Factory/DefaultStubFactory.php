@@ -21,7 +21,7 @@ class DefaultStubFactory implements StubFactoryImplementation
                                                    | ReflectionProperty::IS_PRIVATE;
 
     /**
-     * @var array<string,StubDefault>
+     * @var array<string,StubDefault|false>
      */
     private array $stub_default_cache = [];
 
@@ -67,15 +67,12 @@ class DefaultStubFactory implements StubFactoryImplementation
                 continue;
             }
 
-            if ($prop->hasDefaultValue()) {
-                // We'll just use the one defined in the class
-                continue;
+            $default_provider = $this->findAndCacheDefaultProvider($prop_name, $prop, $context);
+            if ($default_provider) {
+                // Either the property has an explicit StubDefault attribute, or it has no default value in the class
+                // itself but we have been able to guess a suitable provider.
+                $defaults[$prop_name] = $default_provider->getValue($values);
             }
-
-            // Find the StubDefault provider for this property and cache it for re-use on other objects
-            $this->stub_default_cache[$prop_name] ??= $this->default_vals->getDefaultValueProvider($prop, $context);
-
-            $defaults[$prop_name] = $this->stub_default_cache[$prop_name]->getValue($values);
         }
 
         return $defaults;
@@ -118,6 +115,17 @@ class DefaultStubFactory implements StubFactoryImplementation
         }
 
         return $this->defaults_merger;
+    }
+
+    private function findAndCacheDefaultProvider(
+        string $prop_name,
+        ReflectionProperty $prop,
+        StubbingContext $context
+    ): false|StubDefault {
+        // Find the StubDefault provider for this property and cache it for re-use on other objects
+        $this->stub_default_cache[$prop_name] ??= $this->default_vals->getDefaultValueProvider($prop, $context);
+
+        return $this->stub_default_cache[$prop_name];
     }
 
 }

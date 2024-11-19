@@ -9,6 +9,6 @@ use ReflectionProperty;
 
 interface StubDefaultConfigurator
 {
-    public function getDefaultValueProvider(ReflectionProperty $property, StubbingContext $context): StubDefault;
+    public function getDefaultValueProvider(ReflectionProperty $property, StubbingContext $context): false|StubDefault;
 
 }

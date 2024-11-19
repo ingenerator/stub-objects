@@ -22,18 +22,25 @@ use test\TestUtils;
 class AttributeOrGuessStubDefaultConfiguratorTest extends TestCase
 {
 
-    public function test_it_returns_predefined_value_provider_attribute()
-    {
+    #[TestWith(['no_default', 'whatever'])]
+    #[TestWith(['with_default', 'other'])]
+    public function test_it_returns_predefined_value_provider_attribute_in_preference_to_class_default(
+        string $property,
+        string $expect
+    ) {
         $class = new class {
             #[StubDefaultValue('whatever')]
-            private readonly mixed $foo;
+            private readonly mixed $no_default;
+
+            #[StubDefaultValue('other')]
+            private string $with_default = 'class-default';
         };
         $provider = $this->newSubject()->getDefaultValueProvider(
-            $this->getReflectionProperty($class::class, 'foo'),
+            $this->getReflectionProperty($class::class, $property),
             TestUtils::fakeStubbingContext(),
         );
         $this->assertInstanceOf(StubDefaultValue::class, $provider);
-        $this->assertSame('whatever', $provider->getValue([]));
+        $this->assertSame($expect, $provider->getValue([]));
     }
 
     public function test_it_returns_custom_value_provider_attribute()
@@ -104,7 +111,7 @@ class AttributeOrGuessStubDefaultConfiguratorTest extends TestCase
         $this->assertSame($expect_value, $provider->getValue([]));
     }
 
-    public function test_it_throws_if_no_guesser_can_find_a_default_provider()
+    public function test_it_throws_if_no_guesser_can_find_a_default_provider_and_there_is_no_class_default()
     {
         $subject = $this->newSubject(guessers: [new StubDefaultNullGuesser()]);
         $class = new class {
@@ -115,6 +122,21 @@ class AttributeOrGuessStubDefaultConfiguratorTest extends TestCase
         $subject->getDefaultValueProvider(
             $this->getReflectionProperty($class::class, 'foo'),
             TestUtils::fakeStubbingContext(),
+        );
+    }
+
+    public function test_it_returns_false_if_no_guesser_can_find_a_default_provider_and_there_is_a_class_default()
+    {
+        $subject = $this->newSubject(guessers: [new StubDefaultNullGuesser()]);
+        $class = new class {
+            private string $foo = 'bar';
+        };
+        $this->assertSame(
+            FALSE,
+            $subject->getDefaultValueProvider(
+                $this->getReflectionProperty($class::class, 'foo'),
+                TestUtils::fakeStubbingContext(),
+            )
         );
     }
 
