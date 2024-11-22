@@ -7,6 +7,7 @@ use Attribute;
 use DateTimeImmutable;
 use Ingenerator\StubObjects\Attribute\StubAs;
 use Ingenerator\StubObjects\StubbingContext;
+use InvalidArgumentException;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class StubAsDateTime implements StubAs
@@ -17,6 +18,10 @@ class StubAsDateTime implements StubAs
         // @todo support our DateParam syntax
         if (($value === NULL) || ($value instanceof DateTimeImmutable)) {
             return $value;
+        }
+
+        if ($value === '') {
+            throw new InvalidArgumentException('Cannot stub a DateTime value from an empty string');
         }
 
         return new DateTimeImmutable($value);
