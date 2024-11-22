@@ -4,33 +4,14 @@ namespace test\integration;
 
 use Ingenerator\StubObjects\Attribute\StubDefault\StubDefaultValue;
 use Ingenerator\StubObjects\Attribute\StubMergeDefaultsWith;
+use Ingenerator\StubObjects\StubbingContext;
+use Ingenerator\StubObjects\StubFinalValuesMerger;
 use Ingenerator\StubObjects\StubObjects;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class CustomDefaultMergingTest extends TestCase
 {
-
-    public static function doCustomMerge(array $defaults, array $values): array
-    {
-        $status = $values['status'] ?? $defaults['status'];
-        $status_extra_defaults = match ($status) {
-            'draft' => [],
-            'submitted' => [
-                'submitted_by' => 'Brian',
-            ],
-            'paid' => [
-                'submitted_by' => 'Brian',
-                'paid_by' => 'James',
-            ]
-        };
-
-        return [
-            ...$defaults,
-            ...$status_extra_defaults,
-            ...$values,
-        ];
-    }
 
     public static function provider_merge_custom(): array
     {
@@ -77,7 +58,32 @@ class CustomDefaultMergingTest extends TestCase
     }
 }
 
-#[StubMergeDefaultsWith([CustomDefaultMergingTest::class, 'doCustomMerge'])]
+class MyCustomMerger implements StubFinalValuesMerger
+{
+    public function merge(array $defaults, array $values, StubbingContext $context): array
+    {
+        $status = $values['status'] ?? $defaults['status'];
+        $status_extra_defaults = match ($status) {
+            'draft' => [],
+            'submitted' => [
+                'submitted_by' => 'Brian',
+            ],
+            'paid' => [
+                'submitted_by' => 'Brian',
+                'paid_by' => 'James',
+            ]
+        };
+
+        return [
+            ...$defaults,
+            ...$status_extra_defaults,
+            ...$values,
+        ];
+    }
+
+}
+
+#[StubMergeDefaultsWith(new MyCustomMerger())]
 class MyObjectWithCustomMerging
 {
 

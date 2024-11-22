@@ -10,7 +10,9 @@ use Ingenerator\StubObjects\Configurator\StubAsConfigurator;
 use Ingenerator\StubObjects\Configurator\StubDefaultConfigurator;
 use Ingenerator\StubObjects\DefaultValueProvider\AttributeBasedDefaultValueProvider;
 use Ingenerator\StubObjects\DefaultValueProvider\DefaultValueProviderImplementation;
+use Ingenerator\StubObjects\Merger\DefaultStubFinalValuesMerger;
 use Ingenerator\StubObjects\StubbingContext;
+use Ingenerator\StubObjects\StubFinalValuesMerger;
 use ReflectionClass;
 use ReflectionProperty;
 
@@ -30,7 +32,7 @@ class DefaultStubFactory implements StubFactoryImplementation
      */
     private array $stub_as_cache = [];
 
-    private StubMergeDefaultsWith $defaults_merger;
+    private StubFinalValuesMerger $defaults_merger;
 
     public function __construct(
         private readonly ReflectionClass $target_reflection,
@@ -45,7 +47,7 @@ class DefaultStubFactory implements StubFactoryImplementation
         $defaults = $this->getDefaultsForUnspecifiedProperties($values, $context);
 
         // Merge the defaults together (optionally using the custom merger for the class)
-        $values = $this->getDefaultsMerger()->mergeDefaults($defaults, $values);
+        $values = $this->getDefaultsMerger()->merge($defaults, $values, $context);
 
         // Create the instance and apply customised values to it
         $instance = $this->target_reflection->newInstance();
@@ -98,19 +100,16 @@ class DefaultStubFactory implements StubFactoryImplementation
     }
 
 
-    private function getDefaultsMerger(): StubMergeDefaultsWith
+    private function getDefaultsMerger(): StubFinalValuesMerger
     {
-        if ( ! isset($this->defaults_merger)) {
-            $custom_merger = $this->target_reflection->getAttributes(StubMergeDefaultsWith::class);
-            if ($custom_merger) {
-                $this->defaults_merger = $custom_merger[0]->newInstance();
+        if ( ! isset($this->merge_with)) {
+            $attrs = $this->target_reflection->getAttributes(StubMergeDefaultsWith::class);
+            if ($attrs) {
+                $attr = $attrs[0]->newInstance();
+                /** @var StubMergeDefaultsWith $attr */
+                $this->defaults_merger = $attr->merger;
             } else {
-                // @todo: should this be a straight merge or a deep merge?
-                // I think probably a straight merge, the only place it matters is child objects and for those we should
-                // be explicit about which level they are set from
-                $this->defaults_merger = new StubMergeDefaultsWith(
-                    fn(array $defaults, array $values) => [...$defaults, ...$values]
-                );
+                $this->defaults_merger = new DefaultStubFinalValuesMerger();
             }
         }
 
