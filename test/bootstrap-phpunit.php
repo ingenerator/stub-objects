@@ -9,3 +9,8 @@ set_error_handler(
         throw new ErrorException($message, 0, $severity, $file, $line);
     }
 );
+
+
+if ( ! class_exists(\Doctrine\Common\Collections\Collection::class)) {
+    require_once __DIR__.'/fake-doctrine-collections.php';
+}
