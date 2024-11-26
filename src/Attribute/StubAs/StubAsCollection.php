@@ -2,11 +2,13 @@
 
 namespace Ingenerator\StubObjects\Attribute\StubAs;
 
+use Attribute;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Ingenerator\StubObjects\Attribute\StubAs;
 use Ingenerator\StubObjects\StubbingContext;
 
+#[Attribute(Attribute::TARGET_CLASS)]
 class StubAsCollection implements StubAs
 {
     public function __construct(
@@ -18,9 +20,13 @@ class StubAsCollection implements StubAs
 
     public function cast(string $property, mixed $value, StubbingContext $context): mixed
     {
-        // @todo tests etc for this
         // @todo also need an integration test covering this
-        if (($value === NULL) || ($value instanceof $this->collection_class)) {
+        if ($value === NULL) {
+            return $value;
+        }
+
+        if (($this->collection_class !== 'array') && $value instanceof $this->collection_class) {
+            // Assume they have built the collection object with the expected items
             return $value;
         }
 
@@ -30,6 +36,7 @@ class StubAsCollection implements StubAs
         );
 
         return match ($this->collection_class) {
+            'array' => $items,
             Collection::class => new ArrayCollection($items)
         };
     }
