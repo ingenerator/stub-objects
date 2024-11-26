@@ -3,6 +3,7 @@
 namespace Ingenerator\StubObjects;
 
 use Ingenerator\StubObjects\Guesser\StubAsGuesser;
+use Ingenerator\StubObjects\Guesser\StubAsGuesser\StubAsBackedEnumGuesser;
 use Ingenerator\StubObjects\Guesser\StubAsGuesser\StubAsCollectionGuesser;
 use Ingenerator\StubObjects\Guesser\StubAsGuesser\StubAsDateTimeGuesser;
 use Ingenerator\StubObjects\Guesser\StubAsGuesser\StubAsStubObjectGuesser;
@@ -24,6 +25,7 @@ class StandardConfig
             new StubAsDateTimeGuesser(),
             new StubAsStubObjectGuesser(),
             new StubAsCollectionGuesser(),
+            new StubAsBackedEnumGuesser(),
         ];
     }
 
