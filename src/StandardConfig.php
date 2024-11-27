@@ -8,10 +8,10 @@ use Ingenerator\StubObjects\Guesser\StubAsGuesser\StubAsCollectionGuesser;
 use Ingenerator\StubObjects\Guesser\StubAsGuesser\StubAsDateTimeGuesser;
 use Ingenerator\StubObjects\Guesser\StubAsGuesser\StubAsStubObjectGuesser;
 use Ingenerator\StubObjects\Guesser\StubDefaultGuesser;
+use Ingenerator\StubObjects\Guesser\StubDefaultGuesser\StubDefaultDateTimeGuesser;
 use Ingenerator\StubObjects\Guesser\StubDefaultGuesser\StubDefaultNullGuesser;
 use Ingenerator\StubObjects\Guesser\StubDefaultGuesser\StubDefaultStringGuesser;
 use Ingenerator\StubObjects\Guesser\StubDefaultGuesser\StubDefaultStubbableObjectGuesser;
-use Ingenerator\StubObjects\Guesser\StubDefaultGuesser\StubDefualtDateTimeGuesser;
 
 class StandardConfig
 {
@@ -36,7 +36,7 @@ class StandardConfig
     {
         return [
             new StubDefaultNullGuesser(),
-            new StubDefualtDateTimeGuesser(),
+            new StubDefaultDateTimeGuesser(),
             new StubDefaultStringGuesser(),
             new StubDefaultStubbableObjectGuesser(),
         ];

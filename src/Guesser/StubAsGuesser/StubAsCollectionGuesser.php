@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\Collection;
 use Ingenerator\StubObjects\Attribute\StubAs;
 use Ingenerator\StubObjects\Attribute\StubAs\StubAsCollection;
 use Ingenerator\StubObjects\Guesser\StubAsGuesser;
+use Ingenerator\StubObjects\ReflectionUtils;
 use Ingenerator\StubObjects\StubbingContext;
 use ReflectionProperty;
 
@@ -13,8 +14,7 @@ class StubAsCollectionGuesser implements StubAsGuesser
 {
     public function guessCaster(ReflectionProperty $property, StubbingContext $context): false|StubAs
     {
-        // @todo: test with untyped props
-        if ($property->getType()?->getName() === Collection::class) {
+        if (ReflectionUtils::getTypeNameIfAvailable($property) === Collection::class) {
             $collected_class = $this->parseItemClass($property);
 
             return new StubAsCollection($property->getType()->getName(), $collected_class);

@@ -5,7 +5,7 @@ namespace test\unit\Guesser\StubDefault;
 
 use DateTimeImmutable;
 use Ingenerator\StubObjects\Attribute\StubDefault\StubDefaultValue;
-use Ingenerator\StubObjects\Guesser\StubDefaultGuesser\StubDefualtDateTimeGuesser;
+use Ingenerator\StubObjects\Guesser\StubDefaultGuesser\StubDefaultDateTimeGuesser;
 
 class StubDefaultDateTimeGuesserTest extends BaseStubDefaultGuesserTestCase
 {
@@ -22,7 +22,7 @@ class StubDefaultDateTimeGuesserTest extends BaseStubDefaultGuesserTestCase
                 'string' => FALSE,
             ],
             $class::class,
-            new StubDefualtDateTimeGuesser,
+            new StubDefaultDateTimeGuesser,
         );
     }
 }

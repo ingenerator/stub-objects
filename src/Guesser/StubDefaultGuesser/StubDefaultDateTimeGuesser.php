@@ -6,14 +6,15 @@ use DateTimeImmutable;
 use Ingenerator\StubObjects\Attribute\StubDefault;
 use Ingenerator\StubObjects\Attribute\StubDefault\StubDefaultValue;
 use Ingenerator\StubObjects\Guesser\StubDefaultGuesser;
+use Ingenerator\StubObjects\ReflectionUtils;
 use Ingenerator\StubObjects\StubbingContext;
 use ReflectionProperty;
 
-class StubDefualtDateTimeGuesser implements StubDefaultGuesser
+class StubDefaultDateTimeGuesser implements StubDefaultGuesser
 {
     public function guessProvider(ReflectionProperty $property, StubbingContext $context): false|StubDefault
     {
-        if ($property->getType()->getName() === DateTimeImmutable::class) {
+        if (ReflectionUtils::getTypeNameIfAvailable($property) === DateTimeImmutable::class) {
             // Note that we're guessing this in string form, converting back to a DateTime happens at the
             // point of hydrating values because we anyway need to do it there for values that came in overrides
             return new StubDefaultValue('now');
