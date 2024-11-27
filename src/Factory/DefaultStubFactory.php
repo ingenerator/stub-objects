@@ -50,7 +50,7 @@ class DefaultStubFactory implements StubFactoryImplementation
         $values = $this->getDefaultsMerger()->merge($defaults, $values, $context);
 
         // Create the instance and apply customised values to it
-        $instance = $this->target_reflection->newInstance();
+        $instance = $this->target_reflection->newInstanceWithoutConstructor();
         foreach ($values as $prop_name => $value) {
             $this->castAndSetPropertyValue($prop_name, $context, $value, $instance);
         }
