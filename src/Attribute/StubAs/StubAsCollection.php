@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Ingenerator\StubObjects\Attribute\StubAs;
 use Ingenerator\StubObjects\StubbingContext;
 
-#[Attribute(Attribute::TARGET_CLASS)]
+#[Attribute(Attribute::TARGET_PROPERTY)]
 class StubAsCollection implements StubAs
 {
     public function __construct(
