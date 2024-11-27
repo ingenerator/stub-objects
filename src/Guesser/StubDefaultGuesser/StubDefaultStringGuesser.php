@@ -5,6 +5,7 @@ namespace Ingenerator\StubObjects\Guesser\StubDefaultGuesser;
 use Ingenerator\StubObjects\Attribute\StubDefault;
 use Ingenerator\StubObjects\Attribute\StubDefault\StubDefaultRandomString;
 use Ingenerator\StubObjects\Guesser\StubDefaultGuesser;
+use Ingenerator\StubObjects\ReflectionUtils;
 use Ingenerator\StubObjects\StubbingContext;
 use Random\Randomizer;
 use ReflectionProperty;
@@ -19,7 +20,7 @@ class StubDefaultStringGuesser implements StubDefaultGuesser
 
     public function guessProvider(ReflectionProperty $property, StubbingContext $context): false|StubDefault
     {
-        if ($property->getType()->getName() === 'string') {
+        if (ReflectionUtils::getTypeNameIfAvailable($property) === 'string') {
             // @todo: guess email addresses for props with `email` in the name
             // @todo: guess URLs for props with `url` in the name
             return new StubDefaultRandomString(
