@@ -17,13 +17,10 @@ jobs:
       fail-fast: false
       matrix:
         php_version:
-        - '8.3'
         - '8.4'
-        dependencies:
+        dependency-versions:
         - 'default'
-        include:
-        - php_version: '8.3'
-          dependencies: 'lowest'
+        - 'lowest'
 
     steps:
     - name: Setup PHP
@@ -33,30 +30,17 @@ jobs:
         tools: composer:v2
 
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: Get Composer Cache Directory
       id: composer-cache
       run: |
         echo "::set-output name=dir::$(composer config cache-files-dir)"
 
-    - uses: actions/cache@v4
-      with:
-        path: ${{ steps.composer-cache.outputs.dir }}
-        key: ${{ runner.os }}-composer-${{ matrix.dependencies }}-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-composer-${{ matrix.dependencies }}
-
     - name: Install composer dependencies
-      env:
-        DEPENDENCIES: ${{ matrix.dependencies }}
-      run: |
-        if [ $DEPENDENCIES == 'lowest' ]
-        then
-          composer update --prefer-lowest --no-interaction --no-progress
-        else
-          composer install --no-interaction --no-progress
-        fi
+      uses: ramsey/composer-install@v4
+      with:
+        dependency-versions: ${{ matrix.dependency-versions }}
 
     - name: Run unit tests
       run: |
